@@ -2,80 +2,60 @@ set nocompatible               " be iMproved
 filetype off                   " required!
 "filetype plugin on
 
-"reload current file
-":so %
-
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim/
+call vundle#begin()
 
 " let Vundle manage Vundle
 " required!
-Bundle 'gmarik/vundle'
+Bundle 'VundleVim/Vundle.vim'
 
-" My Bundles here:
-"
-" original repos on github
-Bundle 'scrooloose/nerdcommenter.git'
+Plugin 'ack.vim'
+Plugin 'surround.vim'
+Plugin 'SuperTab'
+Plugin 'EasyMotion'
+Plugin 'endwise.vim'
+Plugin 'Syntastic'
+Plugin 'matchit.zip'
+Plugin 'repeat.vim'
+Plugin 'fugitive.vim'
+Plugin 'vim-coffee-script'
+Plugin 'L9'
+Plugin 'FuzzyFinder'
+Plugin 'vim-json-bundle'
+Plugin 'Tabular'
 
-Bundle 'slim-template/vim-slim.git'
-Bundle 'ack.vim'
-Bundle 'surround.vim'
-Bundle 'SuperTab'
-Bundle 'EasyMotion'
-Bundle 'endwise.vim'
-"Bundle 'indent-object'
-Bundle 'Syntastic'
-Bundle 'matchit.zip'
-Bundle 'nerdcommenter'
-Bundle 'repeat.vim'
-Bundle 'fugitive.vim'
-Bundle 'vim-coffee-script'
-"Bundle 'Auto-Pairs'
-"Bundle 'indentruby.vim'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/nerdtree'
+Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+Plugin 'flazz/vim-colorschemes'
+Plugin 'kien/ctrlp.vim'
+Plugin 'jeetsukumaran/vim-buffergator'
+Plugin 'jnwhiteh/vim-golang'
+Plugin 'groenewege/vim-less'
+Plugin 'mustache/vim-mustache-handlebars'
+Plugin 'tpope/vim-fugitive'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'tpope/vim-repeat'
+Plugin 'koron/nyancat-vim'
+Plugin 'ecomba/vim-ruby-refactoring'
+Plugin 'ngmy/vim-rubocop'
 
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-Bundle 'scrooloose/nerdtree.git'
-Bundle 'flazz/vim-colorschemes.git'
-Bundle 'kien/ctrlp.vim.git'
-Bundle 'jeetsukumaran/vim-buffergator.git'
-Bundle 'Tabular'
-"Bundle 'vim-scripts/copypath.vim.git'
-Bundle 'jnwhiteh/vim-golang'
-Bundle 'groenewege/vim-less'
-Bundle 'mustache/vim-mustache-handlebars'
-"Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-rails.git'
-Bundle 'tpope/vim-fugitive.git'
-Bundle 'vim-ruby/vim-ruby.git'
-Bundle 'tpope/vim-repeat.git'
-Bundle 'koron/nyancat-vim'
-"Bundle 'vim-scripts/copypath'
-Bundle 'ecomba/vim-ruby-refactoring'
-
-" vim-scripts repos
-Bundle 'L9'
-Bundle 'FuzzyFinder'
-Bundle 'vim-json-bundle'
-
-" non github repos
-
-" git repos on your local machine (ie. when working on your own plugin)
-
+call vundle#end()
 
 filetype plugin indent on     " required!
 "
 " Brief help
-" :BundleList          - list configured bundles
-" :BundleInstall(!)    - install(update) bundles
-" :BundleSearch(!) foo - search(or refresh cache first) for foo
-" :BundleClean(!)      - confirm(or auto-approve) removal of unused bundles
+" :PluginList          - list configured bundles
+" :PluginInstall(!)    - install(update) bundles
+" :PluginSearch(!) foo - search(or refresh cache first) for foo
+" :PluginClean(!)      - confirm(or auto-approve) removal of unused bundles
 "
 " see :h vundle for more details or wiki for FAQ
 " NOTE: comments after Bundle command are not allowed..
 
 let mapleader = ";"
 colorscheme jellybeans
+syntax on
 
 " line number
 set nu
@@ -185,7 +165,7 @@ highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 match OverLength /\%101v.\+/
 
 
-"au BufNew *.rb 0r ~/.vim/ruby.skel
+au BufNew *.rb 0r ~/.vim/ruby.skel
 au BufNewFile *.rb 0r ~/ruby.skel
 
 command Pry :normal A<CR>binding.pry
@@ -221,17 +201,4 @@ nmap <leader>xml :%!xmllint --format -<CR>
 let g:syntastic_ruby_checkers=['~/.rbenv/shims/ruby']
 
 set autoread
-
 let NERDTreeIgnore=[]
-
-"set clipboard=unnamed
-"nmap cp :let @" = expand("%")
-"let @" = expand("%:p")
-
-
-nmap cp %et @" = expand("%:p")
-"full path
-"let @+ = expand("%:p")
-"relative path
-"let @+ = expand("%")
-
