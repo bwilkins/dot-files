@@ -56,6 +56,7 @@ filetype plugin indent on     " required!
 let mapleader = ";"
 colorscheme jellybeans
 syntax on
+set t_RV=0 " STOP PUTTING ME INTO REPLACE/CHANGE MODE!!!
 
 " line number
 set nu
