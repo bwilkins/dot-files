@@ -165,10 +165,6 @@ nmap <leader>l mQviwu`Q
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 match OverLength /\%101v.\+/
 
-
-au BufNew *.rb 0r ~/.vim/ruby.skel
-au BufNewFile *.rb 0r ~/ruby.skel
-
 command Pry :normal A<CR>binding.pry
 nmap <leader>pry :Pry<CR>==
 
