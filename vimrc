@@ -9,36 +9,40 @@ call vundle#begin()
 " required!
 Bundle 'VundleVim/Vundle.vim'
 
-Plugin 'ack.vim'
 Plugin 'surround.vim'
 Plugin 'SuperTab'
-Plugin 'EasyMotion'
 Plugin 'endwise.vim'
 Plugin 'Syntastic'
 Plugin 'matchit.zip'
-Plugin 'repeat.vim'
-Plugin 'fugitive.vim'
-Plugin 'vim-coffee-script'
 Plugin 'L9'
 Plugin 'FuzzyFinder'
 Plugin 'vim-json-bundle'
-Plugin 'Tabular'
 
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'scrooloose/nerdtree'
 Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 Plugin 'flazz/vim-colorschemes'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-repeat'
+Plugin 'koron/nyancat-vim'
+
+" Navigation
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/nerdtree'
+
+" Searching
+Plugin 'ack.vim'
 Plugin 'kien/ctrlp.vim'
-Plugin 'jeetsukumaran/vim-buffergator'
+
+" Language Syntax
+Plugin 'vim-coffee-script'
 Plugin 'jnwhiteh/vim-golang'
 Plugin 'groenewege/vim-less'
 Plugin 'mustache/vim-mustache-handlebars'
-Plugin 'tpope/vim-fugitive'
+
+" Ruby-specific
 Plugin 'vim-ruby/vim-ruby'
-Plugin 'tpope/vim-repeat'
-Plugin 'koron/nyancat-vim'
-Plugin 'ecomba/vim-ruby-refactoring'
 Plugin 'ngmy/vim-rubocop'
+Plugin 'ecomba/vim-ruby-refactoring'
+Plugin 'thoughtbot/vim-rspec'
 
 call vundle#end()
 
@@ -162,18 +166,25 @@ nmap <leader>L mQgewvu`Q
 nmap <leader>u mQviwU`Q
 nmap <leader>l mQviwu`Q
 
-highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-match OverLength /\%101v.\+/
+" highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+" match OverLength /\%101v.\+/
 
 command Pry :normal A<CR>binding.pry
 nmap <leader>pry :Pry<CR>==
 
-nmap <Leader>a=> :Tabularize /=><CR>
-vmap <Leader>a=> :Tabularize /=><CR>
-nmap <Leader>a= :Tabularize /=<CR>
-vmap <Leader>a= :Tabularize /=<CR>
-nmap <Leader>a: :Tabularize /:/l0 \zs<CR>
-vmap <Leader>a: :Tabularize /:/l0 \zs<CR>
+"nmap <Leader>a=> :Tabularize /=><CR>
+"vmap <Leader>a=> :Tabularize /=><CR>
+"nmap <Leader>a= :Tabularize /=<CR>
+"vmap <Leader>a= :Tabularize /=<CR>
+"nmap <Leader>a: :Tabularize /:/l0 \zs<CR>
+"vmap <Leader>a: :Tabularize /:/l0 \zs<CR>
+
+" RSpec vim bindings
+map <Leader>t :call RunCurrentSpecFile()<CR>
+nmap <Leader>t :call RunCurrentSpecFile()<CR>
+map <Leader>s :call RunNearestSpec()<CR>
+map <Leader>l :call RunLastSpec()<CR>
+map <Leader>a :call RunAllSpecs()<CR>
 
 "nmap <Leader>> :%s/:\(\w*\) .*=>/\1: /gc
 "vmap <Leader>> :%s/:\(\w*\) .*=>/\1: /gc
