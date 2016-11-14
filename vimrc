@@ -28,6 +28,9 @@ Plugin 'koron/nyancat-vim'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/nerdtree'
 
+" TMux navigation helper
+Plugin 'christoomey/vim-tmux-navigator'
+
 " Searching
 Plugin 'ack.vim'
 Plugin 'kien/ctrlp.vim'
@@ -111,8 +114,13 @@ nnoremap JJJJ <Nop>
 " CtrlP
 "unlet g:ctrlp_user_command
 
-set wildignore+=vendor/gems,tmp/*,coverage,public,spec/javascripts/generated,db/bootstrap/,*/db/migrate/
-set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,*.json,*.pdf,*.epub,*.ipa,*.jpeg,*.jpg,*.log,*.cache
+set wildignore+=vendor/gems,tmp/*,coverage,public,spec/javascripts/generated,db/bootstrap/,*/db/migrate/,node_modules/*,dist/*,*/tmp/*
+set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,*.json,*.pdf,*.epub,*.ipa,*.jpeg,*.jpg,*.log,*.cache,*.sublime-project,*.sublime-workspace
+
+let g:ctrlp_custom_ignore = {
+  \ 'dir': 'node_modules\|dist\|tmp\|bower_components',
+  \ 'file': '\.sublime-\w*',
+  \ }
 
 nmap <D-t> :CtrlP<cr>
 let g:ctrlp_match_window_bottom = 0
