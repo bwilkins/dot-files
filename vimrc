@@ -2,7 +2,16 @@ set nocompatible               " be iMproved
 filetype off                   " required!
 "filetype plugin on
 
-set rtp+=~/.vim/bundle/Vundle.vim/
+set ttyfast
+
+if has('nvim')
+  let s:editor_root=expand("~/.config/nvim")
+else
+  let s:editor_root=expand("~/.vim")
+endif
+
+let &rtp = &rtp . ',' . s:editor_root . '/bundle/Vundle.vim/'
+call vundle#rc(s:editor_root . '/bundle')
 call vundle#begin()
 
 " let Vundle manage Vundle
@@ -17,6 +26,7 @@ Plugin 'matchit.zip'
 Plugin 'L9'
 Plugin 'FuzzyFinder'
 Plugin 'vim-json-bundle'
+Plugin 'editorconfig/editorconfig-vim'
 
 Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 Plugin 'flazz/vim-colorschemes'
@@ -30,9 +40,10 @@ Plugin 'scrooloose/nerdtree'
 
 " TMux navigation helper
 Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'jgdavey/tslime.vim'
 
 " Searching
-Plugin 'ack.vim'
+Plugin 'mileszs/ack.vim'
 Plugin 'kien/ctrlp.vim'
 
 " Language Syntax
@@ -102,6 +113,11 @@ nnoremap j gj
 nnoremap k gk
 map <D-j> gT
 map <D-k> gt
+
+if has('nvim')
+  " Terminal mode esc using leader, in case a terminal app needs to listen to Esc
+  tnoremap <leader><Esc> <C-\><C-n>
+endif
 
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
@@ -215,6 +231,16 @@ nmap <leader>xml :%!xmllint --format -<CR>
 
 " Ensure correct ruby is used for linting (NOT SYSTEM RUBY)
 let g:syntastic_ruby_checkers=['~/.rbenv/shims/ruby']
+
+" Setup Rspec to send command to another rmux pane
+let g:rspec_command = 'call Send_to_Tmux("bundle exec rspec {spec}\n")'
+
+" Ensure Send_to_Tmux() always goes to the current session and window
+let g:tslime_always_current_session = 1
+let g:tslime_always_current_window  = 1
+
+" Set ack search command to ignore non-useful directories
+let g:ack_default_options = " -s -H --no-color --no-group --column --ignore-dir=coverage --ignore-dir=log --ignore-dir=tmp --ignore-dir=dist --ignore-dir=node_modules"
 
 set autoread
 let NERDTreeIgnore=[]
