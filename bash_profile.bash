@@ -39,7 +39,9 @@ fi
 
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 
-source ~/.bash_aliases
+if [ -a "${HOME}/.bash_aliases" ]; then
+  source "${HOME}/.bash_aliases"
+fi
 
 # Load Bash It
 source $BASH_IT/bash_it.sh
