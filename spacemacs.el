@@ -40,8 +40,8 @@ values."
      ;; auto-completion
      ;; better-defaults
      emacs-lisp
-     ;; git
-     ;; markdown
+     git
+     markdown
      org
      ;; (shell :variables
      ;;        shell-default-height 30
@@ -229,7 +229,7 @@ values."
    ;; If non nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
-   dotspacemacs-maximized-at-startup t
+   dotspacemacs-maximized-at-startup (not (eq system-type 'darwin))
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
@@ -282,7 +282,7 @@ values."
    ;; `trailing' to delete only the whitespace at end of lines, `changed'to
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
-   dotspacemacs-whitespace-cleanup nil
+   dotspacemacs-whitespace-cleanup 'trailing
    ))
 
 (defun dotspacemacs/user-init ()
@@ -301,19 +301,29 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-    (setq initial-major-mode 'org-mode)
-    (setq org-directory "~/Dropbox/org")
-    (setq org-default-notes-file (concat org-directory "/brett.org"))
-    (setq org-mobile-inbox-for-pull (concat org-directory "/flagged.org"))
-    (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-    (setq org-agenda-files (list org-directory))
-    (setq org-catch-invisible-edits t)
-    (setq org-habit-following-days 4)
-    (setq org-habit-graph-column 60)
-    (setq org-habit-preceding-days 7)
-    (setq org-modules (quote (org-habit)))
-    (setq org-todo-keywords
-          '((sequence "TODO(t)" "|" "DONE(d!)")))
+  (global-linum-mode)
+  (when (eq system-type 'darwin)
+    (setq brett/dropbox-directory "~/Dropbox \(Personal\)")
+    (mac-auto-operator-composition-mode)
+    )
+  (when (eq system-type 'linux)
+    (setq brett/dropbox-directory "~/Dropbox")
+    )
+  (setq org-directory (concat brett/dropbox-directory "/org"))
+  (setq org-default-notes-file (concat org-directory "/brett.org"))
+  (setq org-mobile-inbox-for-pull (concat org-directory "/flagged.org"))
+  (setq org-mobile-directory (concan brett/dropbox-directory "/Apps/MobileOrg"))
+  (setq org-agenda-files (list org-directory))
+  (setq org-catch-invisible-edits t)
+  (setq org-habit-following-days 4)
+  (setq org-habit-graph-column 120)
+  (setq org-habit-preceding-days 7)
+  (setq org-modules (quote (org-habit)))
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "|" "DONE(d!)")))
+
+  ;; Test for (mac-auto-operator-composition-mode) working is below
+  ;; != => -> <$>
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
