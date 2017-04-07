@@ -31,6 +31,9 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     html
+     javascript
+     nginx
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -49,15 +52,23 @@ values."
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
-     ruby
+     (ruby :variables
+           ruby-test-runner 'rspec
+           rspec-use-docker-when-possible t
+           rspec-docker-command "docker-compose run"
+           rspec-docker-container "web"
+           )
      clojure
+     yaml
      puppet
+     docker
+     go
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '( editorconfig )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -135,8 +146,8 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("FiraCode"
-                               ;; :size 22
+   dotspacemacs-default-font '("Fira Code"
+                               :size 16
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -230,7 +241,7 @@ values."
    ;; If non nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
-   dotspacemacs-maximized-at-startup (eq system-type 'darwin)
+   dotspacemacs-maximized-at-startup (not (eq system-type 'darwin))
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
@@ -303,6 +314,9 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (global-linum-mode)
+  (editorconfig-mode 1)
+
+  ;; Org-mode stuff
   (when (eq system-type 'darwin)
     (setq brett/dropbox-directory "~/Dropbox \(Personal\)")
     (mac-auto-operator-composition-mode)
@@ -323,9 +337,29 @@ you should place your code here."
   (setq org-todo-keywords
         '((sequence "TODO(t)" "|" "DONE(d!)")))
 
+  ;; Rspec stuff
+  (require 'rspec-mode)
+  (setq compilation-scroll-output t)
+  (add-hook 'after-init-hook 'inf-ruby-switch-setup)
+
+
   ;; Test for (mac-auto-operator-composition-mode) working is below
   ;; != => -> <$>
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (web-beautify livid-mode skewer-mode simple-httpd js2-refactor js2-mode js-doc coffee-mode nginx-mode go-guru go-eldoc go-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode editorconfig puppet-mode dockerfile-mode docker json-mode tablist docker-tramp json-snatcher json-reformat yaml-mode smeargle orgit mmm-mode markdown-toc markdown-mode magit-gitflow helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md evil-magit magit magit-popup git-commit with-editor dash ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline rvm ruby-tools ruby-test-mode rubocop rspec-mode robe restart-emacs request rbenv rake rainbow-delimiters quelpa popwin persp-mode paradox org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree move-text minitest macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio gnuplot flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu elisp-slime-nav dumb-jump define-word column-enforce-mode clj-refactor clean-aindent-mode cider-eval-sexp-fu chruby bundler auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
