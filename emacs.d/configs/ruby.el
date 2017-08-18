@@ -39,6 +39,8 @@
       (kbd "<down>") 'comint-next-input)))
 
 (add-hook 'enh-ruby-mode-hook 'robe-mode)
+(eval-after-load 'company
+  '(push 'company-robe company-backends))
 (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
 (add-hook 'compilation-filter-hook 'inf-ruby-auto-enter)
 (add-hook 'dired-mode-hook 'rspec-dired-mode)
