@@ -1,5 +1,5 @@
 (use-package js3-mode
-  :ensure nil
+  :ensure t
   :defer 1
   :config
   (use-package handlebars-mode

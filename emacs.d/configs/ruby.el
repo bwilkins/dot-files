@@ -1,22 +1,22 @@
 (use-package enh-ruby-mode
-  :ensure f
+  :ensure t
   :defer 1
   :config
 
   (use-package rspec-mode
-    :ensure f
+    :ensure t
     :defer 1)
 
   (use-package robe
-    :ensure f
+    :ensure t
     :defer 1)
 
   (use-package ruby-end
-    :ensure f
+    :ensure t
     :defer 1)
 
   (use-package rbenv
-    :ensure f
+    :ensure t
     :defer 1
     :config
     (global-rbenv-mode))
@@ -24,7 +24,7 @@
     :ensure t
     :defer 1
     :config
-    
+
     (defun comint-goto-end-and-insert ()
       (interactive)
       (if (not (comint-after-pmark-p))

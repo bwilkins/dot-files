@@ -20,17 +20,17 @@
     ad-do-it))
 
 (use-package hlinum
-  :ensure f
+  :ensure t
   :config
   (hlinum-activate))
 
 
 (use-package grizzl
-  :ensure f
+  :ensure t
   :config
   (setq projectile-completion-system 'grizzl))
 (use-package ivy
-  :ensure f
+  :ensure t
   :config
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
@@ -45,7 +45,7 @@
     (evil-leader/set-key "pg" 'projectile-grep)))
 
 (use-package spacemacs-theme
-  :ensure f)
+  :ensure t)
 (load-theme 'spacemacs-dark t)
 
 (setq default-frame-alist

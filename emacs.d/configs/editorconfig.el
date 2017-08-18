@@ -1,2 +1,4 @@
 (use-package editorconfig
-  :ensure f)
+  :ensure t
+  :config
+  (editorconfig-mode 1))

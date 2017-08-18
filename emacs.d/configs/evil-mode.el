@@ -1,5 +1,5 @@
 (use-package evil
-	     :ensure f
+	     :ensure t
              :config
 	     ;; Enable evil mode! muahahahahah!
 	     (evil-mode t)
@@ -54,17 +54,14 @@
 	     (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
 	     (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
 	     (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-	     
+
 	     ;; Anything that requires evil-mode should be setup under here
 	     (use-package evil-leader
-			  :ensure f
+			  :ensure t
                           :config
 			  (global-evil-leader-mode)
 			  (evil-leader/set-leader ";")
 			  (evil-leader/set-key
 			    "bb" 'switch-to-buffer
 			    "bp" 'previous-buffer
-			    "bn" 'next-buffer
-			    )
-			  )
-	     )
+			    "bn" 'next-buffer)))

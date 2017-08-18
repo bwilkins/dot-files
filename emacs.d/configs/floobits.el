@@ -1,5 +1,5 @@
 (use-package floobits
-  :ensure f
+  :ensure t
   :defer 1
   :config
   (evil-leader/set-key
