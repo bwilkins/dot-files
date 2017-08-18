@@ -44,6 +44,11 @@
     (evil-leader/set-key "pf" 'projectile-find-file)
     (evil-leader/set-key "pg" 'projectile-grep)))
 
+(use-package company
+  :ensure t
+  :config
+  (add-hook 'after-init-hook 'global-company-mode))
+
 (use-package spacemacs-theme
   :ensure t)
 (load-theme 'spacemacs-dark t)
@@ -53,7 +58,7 @@
 
 (setq *bretts-face* "Fira Code Retina-18")
 (add-to-list 'default-frame-alist
-             `(font . ,*bretts-face*))
+	     `(font . ,*bretts-face*))
 
 (set-face-attribute
  'default nil

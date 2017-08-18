@@ -23,7 +23,7 @@
     ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
-    (ember-mode handlebars-sgml-mode handlebars-mode js3-mode grizzl editorconfig multi-term f ivy floobits org-plus-contrib hlinum spacemacs-theme rbenv ruby-end ruby-end-mode robe rspec-mode enh-ruby-mode :enh-ruby-mode magit use-package evil-leader))))
+    (company ember-mode handlebars-sgml-mode handlebars-mode js3-mode grizzl editorconfig multi-term f ivy floobits org-plus-contrib hlinum spacemacs-theme rbenv ruby-end ruby-end-mode robe rspec-mode enh-ruby-mode :enh-ruby-mode magit use-package evil-leader))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
