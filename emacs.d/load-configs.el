@@ -23,7 +23,6 @@
 (load-file "~/.emacs.d/configs/backups.el")
 (load-file "~/.emacs.d/configs/evil-mode.el")
 (load-file "~/.emacs.d/configs/ui.el")
-(load-file "~/.emacs.d/configs/floobits.el")
 (load-file "~/.emacs.d/configs/magit.el")
 (load-file "~/.emacs.d/configs/org-mode.el")
 (load-file "~/.emacs.d/configs/ruby.el")
