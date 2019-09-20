@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export TERM=xterm-256color
 export EDITOR=vim
 # Path to the bash it configuration
 export BASH_IT="${HOME}/.bash_it"
@@ -50,7 +51,7 @@ source $BASH_IT/bash_it.sh
 # infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > $HOME/.config/term/$TERM.ti
 # tic $HOME/.config/term/$TERM.ti
 
-test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+# test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
 
 # Replace cd with pushd https://gist.github.com/mbadran/130469
 function push_cd() {
@@ -109,3 +110,8 @@ function push_cd() {
 # replace standard `cd` with enhanced version, ensure tab-completion works
 alias cd=push_cd
 complete -d cd
+
+export PATH="$HOME/bin:$PATH"
+
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
