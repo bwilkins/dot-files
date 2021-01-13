@@ -22,10 +22,8 @@
  package-archives
  '(("melpa-stable" . "http://stable.melpa.org/packages/")
    ("melpa" . "http://melpa.org/packages/")
-   ("marmalade"   . "http://marmalade-repo.org/packages/")
    ("org"         . "http://orgmode.org/elpa/")
-   ("gnu"         . "http://elpa.gnu.org/packages/")
-   ("sc"   . "http://joseito.republika.pl/sunrise-commander/")))
+   ("gnu"         . "http://elpa.gnu.org/packages/")))
 
 
 (straight-use-package 'use-package)
@@ -41,3 +39,5 @@
 (load-file "~/.emacs.d/configs/org-mode.el")
 (load-file "~/.emacs.d/configs/ruby.el")
 (load-file "~/.emacs.d/configs/editorconfig.el")
+(load-file "~/.emacs.d/configs/markdown.el")
+(load-file "~/.emacs.d/configs/ebooks.el")

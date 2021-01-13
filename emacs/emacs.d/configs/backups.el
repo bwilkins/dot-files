@@ -1,4 +1,7 @@
 (defvar --backup-directory (concat user-emacs-directory "backups"))
+(setq temporary-file-directory (concat user-emacs-directory "tmp"))
+(if (not (file-exists-p temporary-file-directory))
+        (make-directory temporary-file-directory t))
 (if (not (file-exists-p --backup-directory))
         (make-directory --backup-directory t))
 (setq backup-directory-alist `((,--backup-directory)))

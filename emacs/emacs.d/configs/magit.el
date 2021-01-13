@@ -1,5 +1,5 @@
 (use-package magit
   :ensure t
-  :defer 1
+  :straight magit
   :config
   (evil-leader/set-key "gs" 'magit-status))

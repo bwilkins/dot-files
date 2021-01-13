@@ -1,8 +1,3 @@
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(global-linum-mode t)
-(global-hl-line-mode t)
-(fringe-mode -1)
 
 (evil-leader/set-key "d" 'dired)
 
@@ -12,18 +7,7 @@
     (indent-region (point-min) (point-max) nil)))
 (evil-leader/set-key "r" 'indent-buffer)
 
-
-(defadvice linum-update-window (around linum-dynamic activate)
-  (let* ((w (length (number-to-string
-                     (count-lines (point-min) (point-max)))))
-         (linum-format (concat " %" (number-to-string w) "d ")))
-    ad-do-it))
-
-(use-package hlinum
-  :ensure t
-  :config
-  (hlinum-activate))
-
+(global-display-line-numbers-mode)
 
 (use-package grizzl
   :ensure t
@@ -50,13 +34,15 @@
   (add-hook 'after-init-hook 'global-company-mode))
 
 (use-package spacemacs-theme
-  :ensure t)
-(load-theme 'spacemacs-dark t)
+  :defer t
+  :ensure t
+  :init (load-theme 'spacemacs-dark t)
+  )
 
 (setq default-frame-alist
       '((fullscreen . maximized) (fullscreen-restore . fullheight)))
 
-(setq *bretts-face* "Fira Code Retina-18")
+(setq *bretts-face* "Dank Mono-18")
 (add-to-list 'default-frame-alist
 	     `(font . ,*bretts-face*))
 
@@ -66,3 +52,9 @@
 (set-face-attribute
  'default t
  :font *bretts-face*)
+(set-face-attribute
+ 'variable-pitch nil
+ :font "Baskerville-22")
+(set-face-attribute
+ 'variable-pitch t
+ :font "Baskerville-22")

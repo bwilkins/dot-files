@@ -1,28 +1,31 @@
 (use-package enh-ruby-mode
   :ensure t
-  :defer 1
+  :straight enh-ruby-mode
   :config
 
   (use-package rspec-mode
     :ensure t
-    :defer 1)
+    :straight rspec-mode
+    )
 
   (use-package robe
     :ensure t
-    :defer 1)
+    :straight robe
+    )
 
   (use-package ruby-end
     :ensure t
+    :straight ruby-end
     :defer 1)
 
   (use-package rbenv
     :ensure t
-    :defer 1
+    :straight rbenv
     :config
     (global-rbenv-mode))
   (use-package inf-ruby
     :ensure t
-    :defer 1
+    :straight inf-ruby
     :config
 
     (defun comint-goto-end-and-insert ()

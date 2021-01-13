@@ -1,5 +1,6 @@
 (use-package evil
 	     :ensure t
+	     :straight evil
              :config
 	     ;; Enable evil mode! muahahahahah!
 	     (evil-mode t)
@@ -58,6 +59,7 @@
 	     ;; Anything that requires evil-mode should be setup under here
 	     (use-package evil-leader
 			  :ensure t
+			  :straight evil-leader
                           :config
 			  (global-evil-leader-mode)
 			  (evil-leader/set-leader ";")
