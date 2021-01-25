@@ -2,6 +2,14 @@
 
 let
   settings = import ../../../settings.nix;
+  grep = (lib.getBin pkgs.gnugrep) + "/bin/grep";
+  egrep = (lib.getBin pkgs.gnugrep) + "/bin/egrep";
+  sed = (lib.getBin pkgs.gnused) + "/bin/sed";
+  bash = (lib.getBin pkgs.bash) + "/bin/bash";
+  cut = (lib.getBin pkgs.coreutils) + "/bin/cut";
+  echo = (lib.getBin pkgs.coreutils) + "/bin/echo";
+  tee = (lib.getBin pkgs.coreutils) + "/bin/tee";
+  pacmd = (lib.getBin pkgs.pulseaudio) + "/bin/pacmd";
 in {
 
   home.packages = with pkgs; [
@@ -15,8 +23,6 @@ in {
       inactiveInterval = 60;
     };
   };
-
-
 
   xsession.windowManager.i3 = {
     enable = true;
@@ -32,7 +38,6 @@ in {
       set $music    "8:"
       set $games    "9:"
     '';
-
 
     config = {
       fonts = [
@@ -105,7 +110,6 @@ in {
         position = "top";
 
         statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configFile."i3status-rust/config-top.toml".target}";
-        # statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configHome}/i3status-rust/status.toml";
 
         fonts = [
           "${settings.font.nerdFamily} ${settings.font.defaultSize.points}"
@@ -125,6 +129,28 @@ in {
         titlebar = false;
       };
     };
+  };
+
+  xdg.dataFile."bin/toggle-sound-output" = {
+    executable = true;
+
+    text = ''
+      #!${bash}
+
+      set -e
+
+      # Get in-use sink (set as the default-sink)
+      current_output=$(${pacmd} dump | ${grep} set-default-sink | ${cut} -d\  -f2)
+      ${echo} "Current Output: $current_output" | ${tee} -a ~/click.log
+
+      # Only select alsa outputs, only outputs I want (edifier speakers, steelseries headset), and not the current output
+      next_output=$(${pacmd} list-sinks | ${grep} name: | ${grep} alsa_output | ${egrep} 'EDIFIER|SteelSeries' | ${grep} -v $current_output)
+      next_output_name=$(${echo} $next_output | ${sed} -e 's/^.*<\(.*\)>$/\1/')
+
+      ${echo} "Next output: $next_output_name" | ${tee} -a ~/click.log
+
+      ${pacmd} set-default-sink $next_output_name | ${tee} -a ~/click.log
+    '';
   };
 
   programs.i3status-rust = {
@@ -193,6 +219,7 @@ in {
             block = "sound";
             step_width = 6;
             format = "{output_name} {volume}%";
+            on_click = config.xdg.dataFile."bin/toggle-sound-output".target;
             mappings = {
               "alsa_output.usb-EDIFIER_EDIFIER_S880DB-00.analog-stereo" = "Speakers 🔊";
               "alsa_output.usb-SteelSeries_Arctis_Pro_Wireless-00.stereo-game" = "Headset 🎧";
