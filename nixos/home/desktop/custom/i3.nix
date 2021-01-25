@@ -195,6 +195,7 @@ in {
             format = "{output_name} {volume}%";
             mappings = {
               "alsa_output.usb-EDIFIER_EDIFIER_S880DB-00.analog-stereo" = "Speakers";
+              "alsa_output.usb-SteelSeries_Arctis_Pro_Wireless-00.stereo-game" = "Headset";
             };
           }
 
