@@ -106,6 +106,10 @@ in {
       enable = true;
       tray = "auto";
     };
+
+    dropbox = {
+      enable = true;
+    };
   };
 
 }
