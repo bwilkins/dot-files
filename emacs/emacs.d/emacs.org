@@ -34,9 +34,16 @@ I'm going to use jwiegley's "use-package"
 
   (package-initialize)
 
-  ;; Update local package index
-  (unless package-archive-contents
-    (package-refresh-contents))
+  ;; Bootstrap `use-package'
+  (unless (package-installed-p 'use-package)
+	(package-refresh-contents)
+	(package-install 'use-package))
+
+  (eval-when-compile
+	(require 'use-package))
+  (setq use-package-always-ensure t)
+  (require 'diminish)
+  (require 'bind-key)
 
   ;; Automatically update packages
   (use-package auto-package-update
