@@ -1,0 +1,433 @@
+#+TITLE: Brett Wilkins' Emacs Configuration
+#+AUTHOR: Brett Wilkins
+#+EMAIL: brett@brett.geek.nz
+#+OPTIONS: toc:3 num:nil
+
+* Preliminaries
+
+** Acknowledgements
+I've borrowed a lot of this setup from [[https://github.com/rlridenour/old-emacs.d/blob/master/emacs.org][Randy Ridenour]]
+and [[https://www.johnborwick.com/2019/02/20/init-org-mode.html][John Borwick]].
+
+** Installation
+Welcome to my Emacs configuration, me! To install, put this file into
+~/.emacs.d (or wherever else "user-emacs-directory" might be set to), along with a file called "init.el" containing the following:
+
+#+begin_src emacs-lisp :tangle no
+  (require 'org-install)
+  (require 'ob-tangle)
+  (org-babel-load-file (exdpand-file-name "emacs.org" user-emacs-directory))
+#+end_src
+
+I'm going to use jwiegley's "use-package"
+
+#+begin_src emacs-lisp :tangle yes
+  (require 'package)
+
+  (setq
+   package-enable-at-startup nil
+   package-archives
+   '(("melpa-stable" . "http://stable.melpa.org/packages/")
+     ("melpa" . "http://melpa.org/packages/")
+     ("org"         . "http://orgmode.org/elpa/")
+     ("gnu"         . "http://elpa.gnu.org/packages/")))
+
+  (package-initialize)
+
+  ;; Update local package index
+  (unless package-archive-contents
+    (package-refresh-contents))
+
+  ;; Automatically update packages
+  (use-package auto-package-update
+      :config
+      (setq auto-package-update-delete-old-versions t)
+      (setq auto-package-update-hide-results t)
+      (auto-package-update-maybe))
+#+end_src
+
+Set the path variable to match the shell.
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package exec-path-from-shell
+      :config (exec-path-from-shell-initialize))
+#+end_src
+
+** Variables
+
+#+begin_src emacs-lisp :tangle yes
+  (setq --dropbox-dir "~/Dropbox/")
+  (setq --org-home (concat --dropbox-dir "org/"))
+#+end_src
+
+
+#+begin_src emacs-lisp :tangle yes
+  (defvar --backup-directory (concat user-emacs-directory "backups"))
+  (setq temporary-file-directory (concat user-emacs-directory "tmp"))
+  (if (not (file-exists-p temporary-file-directory))
+          (make-directory temporary-file-directory t))
+  (if (not (file-exists-p --backup-directory))
+          (make-directory --backup-directory t))
+  (setq backup-directory-alist `((,--backup-directory)))
+  (setq make-backup-files nil               ; backup of a file the first time it is saved.
+        backup-by-copying t               ; don't clobber symlinks
+        version-control t                 ; version numbers for backup files
+        delete-old-versions t             ; delete excess backup files silently
+        delete-by-moving-to-trash t
+        kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+        kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+        auto-save-default t               ; auto-save every buffer that visits a file
+        auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+        auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+        create-lockfiles nil
+        )
+#+end_src
+
+* Package setup
+
+Persistent Scratch
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package persistent-scratch
+    :ensure t
+    :config
+    (persistent-scratch-setup-default))
+#+end_src
+
+Evil Mode
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package evil
+    :ensure t
+    ;:straight evil
+    :config
+    ;; Enable evil mode! muahahahahah!
+    (evil-mode t)
+
+    ;; Treat wrapped line scrolling as single lines
+    (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+    (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+    ;; esc quits pretty much anything (like pending prompts in the minibuffer)
+    (define-key evil-normal-state-map [escape] 'keyboard-quit)
+    (define-key evil-visual-state-map [escape] 'keyboard-quit)
+    (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+    (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+    (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+    (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+    (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+    ;; Enable smash escape (ie 'jk' and 'kj' quickly to exit insert mode)
+    (define-key evil-insert-state-map "k" #'cofi/maybe-exit-kj)
+    (evil-define-command cofi/maybe-exit-kj ()
+      :repeat change
+      (interactive)
+      (let ((modified (buffer-modified-p)))
+       (insert "k")
+       (let ((evt (read-event (format "Insert %c to exit insert state" ?j)
+                        nil 0.5)))
+         (cond
+          ((null evt) (message ""))
+          ((and (integerp evt) (char-equal evt ?j))
+           (delete-char -1)
+           (set-buffer-modified-p modified)
+           (push 'escape unread-command-events))
+          (t (setq unread-command-events (append unread-command-events
+                                       (list evt))))))))
+     (define-key evil-insert-state-map "j" #'cofi/maybe-exit-jk)
+     (evil-define-command cofi/maybe-exit-jk ()
+       :repeat change
+       (interactive)
+       (let ((modified (buffer-modified-p)))
+       (insert "j")
+       (let ((evt (read-event (format "Insert %c to exit insert state" ?k)
+                        nil 0.5)))
+         (cond
+          ((null evt) (message ""))
+          ((and (integerp evt) (char-equal evt ?k))
+           (delete-char -1)
+           (set-buffer-modified-p modified)
+           (push 'escape unread-command-events))
+          (t (setq unread-command-events (append unread-command-events
+                                       (list evt))))))))
+
+     ;; Add some window movement
+     (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+     (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+     (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+     (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
+
+     ;; Anything that requires evil-mode should be setup under here
+     (use-package evil-leader
+              :ensure t
+              ;:straight evil-leader
+                    :config
+              (global-evil-leader-mode)
+              (evil-leader/set-leader ";")
+              (evil-leader/set-key
+                "bb" 'switch-to-buffer
+                "bp" 'previous-buffer
+                "bn" 'next-buffer)))
+#+end_src
+
+UI Setup stuff
+
+#+begin_src emacs-lisp :toggle yes
+  (evil-leader/set-key "d" 'dired)
+
+  (defun indent-buffer ()
+    (interactive)
+    (save-excursion
+      (indent-region (point-min) (point-max) nil)))
+  (evil-leader/set-key "r" 'indent-buffer)
+
+  (global-display-line-numbers-mode)
+
+  (use-package grizzl
+    :ensure t
+    :config
+    (setq projectile-completion-system 'grizzl))
+  (use-package ivy
+    :ensure t
+    :config
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffers t)
+    (setq enable-recursive-minibuffers t)
+    (use-package projectile
+      :ensure t
+      :init
+      :defer 1
+      :config
+      (projectile-mode)
+      (evil-leader/set-key "pf" 'projectile-find-file)
+      (evil-leader/set-key "pg" 'projectile-grep)))
+
+  (use-package company
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'global-company-mode))
+
+  (use-package spacemacs-theme
+    :defer t
+    :ensure t
+    :init (load-theme 'spacemacs-dark t)
+    )
+
+  ;; (setq default-frame-alist
+  ;;       '((fullscreen . fullheight) (fullscreen-restore . fullheight)))
+
+  ;; (setq *bretts-face* "Dank Mono-18")
+  ;; (add-to-list 'default-frame-alist
+  ;; 	     `(font . ,*bretts-face*))
+
+  ;; (set-face-attribute
+  ;;  'default nil
+  ;;  :font *bretts-face*)
+  ;; (set-face-attribute
+  ;;  'default t
+  ;;  :font *bretts-face*)
+  ;; (set-face-attribute
+  ;;  'variable-pitch nil
+  ;;  :font "Libre Baskerville-16")
+  ;; (set-face-attribute
+  ;;  'variable-pitch t
+  ;;  :font "Libre Baskerville-16")
+#+end_src
+
+Magit Setup
+
+#+begin_src emacs-lisp :toggle yes
+  (use-package magit
+    :ensure t
+    ;:straight magit
+    :config
+    (evil-leader/set-key "gs" 'magit-status))
+#+end_src
+
+Org-Mode setup
+
+#+begin_src emacs-lisp :toggle yes
+  (use-package org
+    ;:straight org-plus-contrib
+    )
+
+  (use-package org-journal
+    :ensure t
+    ;:straight org-journal
+    :custom
+    (org-journal-dir (concat --org-home "journal/"))
+    (org-journal-date-format "%A, %d %B %Y")
+    :config
+    (evil-leader/set-key "jj" 'org-journal-new-entry)
+    )
+
+  (use-package org-roam
+    :ensure t
+    :hook (after-init . org-roam-mode)
+    ;:straight (:host github :repo "org-roam/org-roam" :branch "master")
+    :custom
+    (org-roam-directory (concat --org-home "roam/"))
+
+    :bind (:map org-roam-mode-map
+  	      (("C-c n l" . org-roam)
+  	       ("C-c n f" . org-roam-find-file)
+  	       ("C-c n g" . org-roam-show-graph))
+  	      :map org-mode-map
+  	      (("C-c n i" . org-roam-insert)))
+    :config
+
+    (evil-leader/set-key "ar" 'org-roam)
+    (evil-leader/set-key "af" 'org-roam-find-file)
+    (evil-leader/set-key "aa" 'org-roam-insert)
+    )
+#+end_src
+
+Calendar setup
+
+#+begin_src emacs-lisp :toggle yes
+  ; (use-package org-gcal
+  ;   :after org
+  ;   :straight org-gcal
+  ;   :config
+  ;   (setq org-gcal-client-id ""
+  ;         org-gcal-client-secret ""
+  ;         org-gcal-file-alist '(
+  ; 			      ("brett@brett.geek.nz" . "~/org/brett@brett.geek.nz.org")
+  ; 			      ("brett@cogent.co" . "~/org/brett@cogent.co.org")
+  ; 			      )
+  ;         org-gcal-header-alist '(("brett@brett.geek.nz" . "#+PROPERTY: TIMELINE_FACE \"pink\"\n"))
+  ;         org-gcal-auto-archive nil
+  ;         org-gcal-notify-p nil
+  ; 	org-gcal-recurring-events-mode t
+  ; 	)
+  ;
+  ;   (add-hook 'org-agenda-mode-hook 'org-gcal-fetch)
+  ;   (add-hook 'org-capture-after-finalize-hook 'org-gcal-fetch))
+#+end_src
+
+Ruby Setup
+
+#+begin_src emacs-lisp :toggle yes
+  (use-package enh-ruby-mode
+    :ensure t
+    ;:straight enh-ruby-mode
+    :config
+
+    (use-package rspec-mode
+      :ensure t
+      ;:straight rspec-mode
+      )
+
+    (use-package robe
+      :ensure t
+      ;:straight robe
+      )
+
+    (use-package ruby-end
+      :ensure t
+      ;:straight ruby-end
+      :defer 1)
+
+    (use-package rbenv
+      :ensure t
+      ;:straight rbenv
+      :config
+      (global-rbenv-mode))
+    (use-package inf-ruby
+      :ensure t
+      ;:straight inf-ruby
+      :config
+
+      (defun comint-goto-end-and-insert ()
+        (interactive)
+        (if (not (comint-after-pmark-p))
+  	  (progn (comint-goto-process-mark)
+  		 (evil-append-line nil))
+  	(evil-insert 1)))
+      (evil-define-key 'normal comint-mode-map "i" 'comint-goto-end-and-insert)
+      (evil-define-key 'normal inf-ruby-mode-map "i" 'comint-goto-end-and-insert)
+
+      (evil-define-key 'insert comint-mode-map
+        (kbd "<up>") 'comint-previous-input
+        (kbd "<down>") 'comint-next-input)))
+
+  (add-hook 'enh-ruby-mode-hook 'robe-mode)
+  (eval-after-load 'company
+    '(push 'company-robe company-backends))
+  (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
+  (add-hook 'compilation-filter-hook 'inf-ruby-auto-enter)
+  (add-hook 'dired-mode-hook 'rspec-dired-mode)
+
+  (setenv "CAPYBARA_INLINE_SCREENSHOT" "artifact")
+#+end_src
+
+EditorConfig integration
+
+#+begin_src emacs-lisp :toggle yes
+  (use-package editorconfig
+    :ensure t
+    ;:straight editorconfig
+    :config
+    (editorconfig-mode 1))
+#+end_src
+
+Markdown
+
+#+begin_src emacs-lisp :toggle yes
+  (use-package markdown-mode
+    :ensure t
+    ;:straight markdown-mode
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+  	 ("readme\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    :init (setq markdown-command "multimarkdown"))
+#+end_src
+
+eBook reading
+
+#+begin_src emacs-lisp :toggle yes
+  (setq --reading-text-width 82)
+  (defun --set-reading-margins ()
+    "Disable line numbers and set margins to roughly centre text"
+    (interactive)
+    (display-line-numbers-mode 0)
+    ;(set-window-margins nil 20 20)
+    (let ((--new-margin (and --reading-text-width
+                            (/ (max 0 (- (window-total-width)
+                                         --reading-text-width))
+                               2))))
+      (setq left-margin-width --new-margin)
+      (setq right-margin-width --new-margin)
+      )
+    )
+
+  (use-package nov
+    ;:straight nov
+    :config
+    (setq nov-text-width 80)
+    (setq nov-variable-pitch t)
+    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+
+    (defun --nov-font-setup ()
+      (face-remap-add-relative 'variable-pitch :family "Libre Baskerville"
+                                             :height 1.0))
+    (add-hook 'nov-mode-hook '--nov-font-setup)
+
+    (defun --nov-margins ()
+      (add-hook 'after-change-major-mode-hook '--set-reading-margins :append :local)
+      ; I can't seem to get the following to work...
+      ;(add-hook 'window-configuration-change-hook '--set-reading-margins :append :local)
+      )
+    (add-hook 'nov-mode-hook '--nov-margins)
+
+    )
+
+  (if (eq system-type 'darwin)
+      (setenv "PKG_CONFIG_PATH" "/usr/local/Cellar/zlib/1.2.8/lib/pkgconfig:/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig")
+    )
+  (use-package pdf-tools
+    ;:straight pdf-tools
+    :magic ("%PDF" . pdf-view-mode)
+    :config
+    (pdf-tools-install :no-query))
+#+end_src
