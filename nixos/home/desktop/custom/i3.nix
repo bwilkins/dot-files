@@ -158,8 +158,25 @@ in {
 
     bars = {
       top = {
-        theme = "modern";
-        icons = "awesome5";
+        settings = {
+          theme = {
+            name = "modern";
+          };
+
+          icons = {
+            name = "awesome5";
+            overrides = {
+              memory_mem = "💭 ";
+              cpu = "🖥️ ";
+              thermometer = "🌡️";
+              volume_empty = "🔈";
+              volume_muted = "🔇";
+              volume_half = "🔉";
+              volume_full = "🔊";
+              time = "🕓";
+            };
+          };
+        };
 
         blocks = [
           {
@@ -221,8 +238,8 @@ in {
             format = "{output_name} {volume}%";
             on_click = config.xdg.dataFile."bin/toggle-sound-output".target;
             mappings = {
-              "alsa_output.usb-EDIFIER_EDIFIER_S880DB-00.analog-stereo" = "Speakers 🔊";
-              "alsa_output.usb-SteelSeries_Arctis_Pro_Wireless-00.stereo-game" = "Headset 🎧";
+              "alsa_output.usb-EDIFIER_EDIFIER_S880DB-00.analog-stereo" = " Speakers📣";
+              "alsa_output.usb-SteelSeries_Arctis_Pro_Wireless-00.stereo-game" = " Headset🎧";
             };
           }
 
