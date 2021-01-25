@@ -6,7 +6,7 @@
   :ensure t
   :straight org-journal
   :custom
-  (org-journal-dir "~/Dropbox (Personal)/org/journal/")
+  (org-journal-dir (concat --org-home "journal/"))
   (org-journal-date-format "%A, %d %B %Y")
   :config
   (evil-leader/set-key "jj" 'org-journal-new-entry)
@@ -15,9 +15,9 @@
 (use-package org-roam
   :ensure t
   :hook (after-init . org-roam-mode)
-  :straight (:host github :repo "jethrokuan/org-roam" :branch "develop")
+  :straight (:host github :repo "org-roam/org-roam" :branch "master")
   :custom
-  (org-roam-directory "~/Dropbox (Personal)/org/roam/")
+  (org-roam-directory (concat --org-home "roam/"))
 
   :bind (:map org-roam-mode-map
 	      (("C-c n l" . org-roam)

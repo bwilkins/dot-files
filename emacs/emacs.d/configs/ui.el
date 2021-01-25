@@ -1,4 +1,3 @@
-
 (evil-leader/set-key "d" 'dired)
 
 (defun indent-buffer ()
@@ -40,7 +39,7 @@
   )
 
 (setq default-frame-alist
-      '((fullscreen . maximized) (fullscreen-restore . fullheight)))
+      '((fullscreen . fullheight) (fullscreen-restore . fullheight)))
 
 (setq *bretts-face* "Dank Mono-18")
 (add-to-list 'default-frame-alist
@@ -54,7 +53,7 @@
  :font *bretts-face*)
 (set-face-attribute
  'variable-pitch nil
- :font "Baskerville-22")
+ :font "Libre Baskerville-16")
 (set-face-attribute
  'variable-pitch t
- :font "Baskerville-22")
+ :font "Libre Baskerville-16")

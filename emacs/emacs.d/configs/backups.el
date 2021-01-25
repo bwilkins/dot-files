@@ -17,3 +17,8 @@
       auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
       create-lockfiles nil
       )
+
+(use-package persistent-scratch
+  :ensure t
+  :config
+  (persistent-scratch-setup-default))

@@ -21,7 +21,7 @@
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
   (defun --nov-font-setup ()
-    (face-remap-add-relative 'variable-pitch :family "Baskerville"
+    (face-remap-add-relative 'variable-pitch :family "Libre Baskerville"
                                            :height 1.0))
   (add-hook 'nov-mode-hook '--nov-font-setup)
 
