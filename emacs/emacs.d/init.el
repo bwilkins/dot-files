@@ -2,9 +2,7 @@
 (require 'ob-tangle)
 (org-babel-load-file (expand-file-name "emacs.org" user-emacs-directory))
 
-;; (load "~/.emacs.d/load-configs.el")
-
-;; (server-start)
+(server-start)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
