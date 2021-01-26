@@ -19,9 +19,9 @@ Welcome to my Emacs configuration, me! To install, put this file into
   (org-babel-load-file (exdpand-file-name "emacs.org" user-emacs-directory))
 #+end_src
 
-** Package Manager setup
+** Package Manager
 
-*** Initialise Package
+*** Package Manager / Initialise Package
 
 Setup Melpa Stable, Melpa, Org and Elpa as available package repos
 
@@ -39,7 +39,7 @@ Setup Melpa Stable, Melpa, Org and Elpa as available package repos
   (package-initialize)
 #+end_src
 
-*** Install and configure Use-Package
+*** Package Manager / Install and configure Use-Package
 
 I use jwiegley's "use-package" tool for installing and setting up packages.
 
@@ -63,7 +63,7 @@ I use jwiegley's "use-package" tool for installing and setting up packages.
 
 ** Variables
 
-*** Inherit $PATH
+*** Variables / Inherit $PATH
 
 Set the path variable to match the shell.
 
@@ -71,7 +71,8 @@ Set the path variable to match the shell.
   (use-package exec-path-from-shell
       :config (exec-path-from-shell-initialize))
 #+end_src
-*** Org Home
+
+*** Variables / Org Home
 
 I keep my org tree in dropbox, so I'm going to set up a couple of variables to be used later, telling org-mode where to go
 
@@ -83,7 +84,7 @@ I keep my org tree in dropbox, so I'm going to set up a couple of variables to b
     --org-home (concat --dropbox-dir "org/"))
 #+end_src
 
-*** Fonts
+*** Variables / Fonts
 
 Until I've figured out how Linux (particularly NixOS, but previously Manjaro) deals with adding fonts,
 I've got different config here for MacOS from Linux. I've had a bunch of trouble getting Dank Mono to work
@@ -217,7 +218,7 @@ I'm told this will be useful if I want to use scratch buffers more
                 "bn" 'next-buffer)))
 #+end_src
 
-** UI Setup stuff
+** UI Setup
 
 *** Dired
 Now that evil-mode is setup, here's a vim-style shortcut for dired-mode
@@ -312,7 +313,7 @@ On MacOS, I prefer to run this full-screen
 
 *** Fonts
 
-Setup the fonts that we selected back in the [[Variables/Fonts]] Section
+Setup the fonts that we selected back in the [[Variables / Fonts][Variables / Fonts]] Section
 
 #+begin_src emacs-lisp :tangle yes
   (add-to-list 'default-frame-alist `(font . ,--code-font))
@@ -373,7 +374,9 @@ The best git interface I've ever used, period.
     )
 #+end_src
 
-** Calendar setup
+** Calendar
+
+"I'll get around to this later"
 
 #+begin_src emacs-lisp :tangle yes
   ; (use-package org-gcal
@@ -396,7 +399,7 @@ The best git interface I've ever used, period.
   ;   (add-hook 'org-capture-after-finalize-hook 'org-gcal-fetch))
 #+end_src
 
-** Ruby Setup
+** Ruby
 
 #+begin_src emacs-lisp :tangle yes
   (use-package enh-ruby-mode
