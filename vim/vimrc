@@ -51,6 +51,8 @@ Plugin 'vim-coffee-script'
 Plugin 'jnwhiteh/vim-golang'
 Plugin 'groenewege/vim-less'
 Plugin 'mustache/vim-mustache-handlebars'
+Plugin 'vim-orgmode'
+Plugin 'LnL7/vim-nix'
 
 " Ruby-specific
 Plugin 'vim-ruby/vim-ruby'
