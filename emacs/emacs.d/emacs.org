@@ -338,6 +338,7 @@ The best git interface I've ever used, period.
 
 #+begin_src emacs-lisp :tangle yes
   (use-package org
+    :ensure org-plus-contrib
     ;:straight org-plus-contrib
     )
 
