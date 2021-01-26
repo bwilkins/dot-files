@@ -205,6 +205,9 @@ in {
       source-code-pro
       source-sans-pro
       source-serif-pro
+      fira-code
+      twemoji-color-font
+      libre-baskerville
       font-awesome (
         nerdfonts.override {
           fonts = [ "FiraCode"];
