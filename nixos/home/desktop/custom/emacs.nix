@@ -25,13 +25,14 @@ in {
       config = config.home.file.".emacs.d/emacs.org".target;
       alwaysEnsure = true;
       extraEmacsPackages = epkgs: with epkgs; [
-        org-plus-contrib
+        company
         evil
         evil-leader
-        magit
         ivy
+        magit
+        org-plus-contrib
         projectile
-        company
+        spacemacs-theme
       ];
     })
   ];
