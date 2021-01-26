@@ -16,6 +16,7 @@ in {
     fzy
     gnupg
     ripgrep
+    sqlite
     tig
     unzip
     wget
