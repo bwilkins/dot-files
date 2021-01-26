@@ -45,6 +45,7 @@
       # Language syntax/support
       vim-ruby
       vim-nix
+      vim-orgmode
     ];
 
     extraConfig = ''
@@ -56,7 +57,7 @@
       colorscheme jellybeans
 
       set nu
-      set nowrap
+      " set nowrap
 
       set expandtab
       set tabstop=2
