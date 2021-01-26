@@ -19,7 +19,11 @@ Welcome to my Emacs configuration, me! To install, put this file into
   (org-babel-load-file (exdpand-file-name "emacs.org" user-emacs-directory))
 #+end_src
 
-I'm going to use jwiegley's "use-package"
+** Package Manager setup
+
+*** Initialise Package
+
+Setup Melpa Stable, Melpa, Org and Elpa as available package repos
 
 #+begin_src emacs-lisp :tangle yes
   (require 'package)
@@ -33,17 +37,21 @@ I'm going to use jwiegley's "use-package"
      ("gnu"         . "http://elpa.gnu.org/packages/")))
 
   (package-initialize)
+#+end_src
 
+*** Install and configure Use-Package
+
+I use jwiegley's "use-package" tool for installing and setting up packages.
+
+#+begin_src emacs-lisp :tangle yes
   ;; Bootstrap `use-package'
   (unless (package-installed-p 'use-package)
-	(package-refresh-contents)
-	(package-install 'use-package))
+    (package-refresh-contents)
+    (package-install 'use-package))
 
   (eval-when-compile
-	(require 'use-package))
+    (require 'use-package))
   (setq use-package-always-ensure t)
-  (require 'diminish)
-  (require 'bind-key)
 
   ;; Automatically update packages
   (use-package auto-package-update
@@ -53,26 +61,58 @@ I'm going to use jwiegley's "use-package"
       (auto-package-update-maybe))
 #+end_src
 
+** Variables
+
+*** Inherit $PATH
+
 Set the path variable to match the shell.
 
 #+begin_src emacs-lisp :tangle yes
   (use-package exec-path-from-shell
       :config (exec-path-from-shell-initialize))
 #+end_src
+*** Org Home
 
-** Variables
+I keep my org tree in dropbox, so I'm going to set up a couple of variables to be used later, telling org-mode where to go
 
 #+begin_src emacs-lisp :tangle yes
-  (setq --dropbox-dir "~/Dropbox/")
-  (setq --org-home (concat --dropbox-dir "org/"))
+  (setq
+    --dropbox-dir (if (file-exists-p "~/Dropbox/")
+      "~/Dropbox/"
+      "~/Dropbox (Personal)/")
+    --org-home (concat --dropbox-dir "org/"))
 #+end_src
 
+*** Fonts
+
+Until I've figured out how Linux (particularly NixOS, but previously Manjaro) deals with adding fonts,
+I've got different config here for MacOS from Linux. I've had a bunch of trouble getting Dank Mono to work
+with FontConfig (despite having both OTF and TTF versions of it); also not sure how best to package it if I
+can get it to work, given it's a paid font, I don't want to accidentally make it widely available to the internet.
 
 #+begin_src emacs-lisp :tangle yes
-  (defvar --backup-directory (concat user-emacs-directory "backups"))
-  (setq temporary-file-directory (concat user-emacs-directory "tmp"))
-  (if (not (file-exists-p temporary-file-directory))
-          (make-directory temporary-file-directory t))
+  (if (eq system-type 'darwin)
+      ;; If MacOS...
+      (setq
+      --code-font "Dank Mono-18"
+      --pretty-font "Baskerville-16"
+      )
+
+      ;; Else...
+      (setq
+      --code-font "Source Mono-18"
+      --pretty-font "Libre Baskerville-18"
+      )
+    )
+#+end_src
+
+** File Backups
+
+#+begin_src emacs-lisp :tangle yes
+  (setq --temporary-file-directory (concat user-emacs-directory "/tmp"))
+  (setq --backup-directory (concat user-emacs-directory "/backup"))
+  (if (not (file-exists-p --temporary-file-directory))
+          (make-directory --temporary-file-directory t))
   (if (not (file-exists-p --backup-directory))
           (make-directory --backup-directory t))
   (setq backup-directory-alist `((,--backup-directory)))
@@ -90,9 +130,12 @@ Set the path variable to match the shell.
         )
 #+end_src
 
+
 * Package setup
 
-Persistent Scratch
+** Persistent Scratch
+
+I'm told this will be useful if I want to use scratch buffers more
 
 #+begin_src emacs-lisp :tangle yes
   (use-package persistent-scratch
@@ -101,14 +144,13 @@ Persistent Scratch
     (persistent-scratch-setup-default))
 #+end_src
 
-Evil Mode
+** Evil Mode
 
 #+begin_src emacs-lisp :tangle yes
   (use-package evil
     :ensure t
     ;:straight evil
     :config
-    ;; Enable evil mode! muahahahahah!
     (evil-mode t)
 
     ;; Treat wrapped line scrolling as single lines
@@ -175,23 +217,49 @@ Evil Mode
                 "bn" 'next-buffer)))
 #+end_src
 
-UI Setup stuff
+** UI Setup stuff
 
-#+begin_src emacs-lisp :toggle yes
+*** Dired
+Now that evil-mode is setup, here's a vim-style shortcut for dired-mode
+
+#+begin_src emacs-lisp :tangle yes
   (evil-leader/set-key "d" 'dired)
+#+end_src
 
+*** Indentation
+
+Shortcut to re-indent the entire buffer
+#+begin_src emacs-lisp :tangle yes
   (defun indent-buffer ()
     (interactive)
     (save-excursion
       (indent-region (point-min) (point-max) nil)))
   (evil-leader/set-key "r" 'indent-buffer)
+#+end_src
 
+*** Linum-Mode
+
+Newer version of linum-mode (faster than linum?)
+
+#+begin_src emacs-lisp :tangle yes
   (global-display-line-numbers-mode)
+#+end_src
 
+*** Auto-complete
+
+**** Grizzl
+Use grizzl for auto-completion
+#+begin_src emacs-lisp :tangle yes
   (use-package grizzl
     :ensure t
     :config
     (setq projectile-completion-system 'grizzl))
+#+end_src
+
+**** Ivy
+Apparently also using ivy for autocompletion?
+
+#+begin_src emacs-lisp :tangle yes
   (use-package ivy
     :ensure t
     :config
@@ -206,42 +274,59 @@ UI Setup stuff
       (projectile-mode)
       (evil-leader/set-key "pf" 'projectile-find-file)
       (evil-leader/set-key "pg" 'projectile-grep)))
+#+end_src
 
+**** CompAny
+
+TIL I have at least 3 different auto-completion tools in my emacs config. wow.
+
+#+begin_src emacs-lisp :tangle yes
   (use-package company
     :ensure t
     :config
     (add-hook 'after-init-hook 'global-company-mode))
+#+end_src
 
+*** Theming
+
+I first used spacemacs, and I quite liked the theme, just not the rest of the stuff that it brought with it.
+So how about we just use the theme?
+
+#+begin_src emacs-lisp :tangle yes
   (use-package spacemacs-theme
     :defer t
     :ensure t
     :init (load-theme 'spacemacs-dark t)
     )
-
-  ;; (setq default-frame-alist
-  ;;       '((fullscreen . fullheight) (fullscreen-restore . fullheight)))
-
-  ;; (setq *bretts-face* "Dank Mono-18")
-  ;; (add-to-list 'default-frame-alist
-  ;; 	     `(font . ,*bretts-face*))
-
-  ;; (set-face-attribute
-  ;;  'default nil
-  ;;  :font *bretts-face*)
-  ;; (set-face-attribute
-  ;;  'default t
-  ;;  :font *bretts-face*)
-  ;; (set-face-attribute
-  ;;  'variable-pitch nil
-  ;;  :font "Libre Baskerville-16")
-  ;; (set-face-attribute
-  ;;  'variable-pitch t
-  ;;  :font "Libre Baskerville-16")
 #+end_src
 
-Magit Setup
+*** Frame/Window sizing
 
-#+begin_src emacs-lisp :toggle yes
+On MacOS, I prefer to run this full-screen
+
+#+begin_src emacs-lisp :tangle yes
+  (if (eq system-type 'darwin)
+    (setq default-frame-alist
+         '((fullscreen . maximized) (fullscreen-restore . maximized))))
+#+end_src
+
+*** Fonts
+
+Setup the fonts that we selected back in the [[Variables/Fonts]] Section
+
+#+begin_src emacs-lisp :tangle yes
+  (add-to-list 'default-frame-alist `(font . ,--code-font))
+  (set-face-attribute 'default nil :font --code-font)
+  (set-face-attribute 'default t :font --code-font)
+  (set-face-attribute 'variable-pitch nil :font --pretty-font)
+  (set-face-attribute 'variable-pitch t :font --pretty-font)
+#+end_src
+
+** Magit Setup
+   
+The best git interface I've ever used, period.
+
+#+begin_src emacs-lisp :tangle yes
   (use-package magit
     :ensure t
     ;:straight magit
@@ -249,9 +334,9 @@ Magit Setup
     (evil-leader/set-key "gs" 'magit-status))
 #+end_src
 
-Org-Mode setup
+** Org-Mode setup
 
-#+begin_src emacs-lisp :toggle yes
+#+begin_src emacs-lisp :tangle yes
   (use-package org
     ;:straight org-plus-contrib
     )
@@ -287,9 +372,9 @@ Org-Mode setup
     )
 #+end_src
 
-Calendar setup
+** Calendar setup
 
-#+begin_src emacs-lisp :toggle yes
+#+begin_src emacs-lisp :tangle yes
   ; (use-package org-gcal
   ;   :after org
   ;   :straight org-gcal
@@ -310,9 +395,9 @@ Calendar setup
   ;   (add-hook 'org-capture-after-finalize-hook 'org-gcal-fetch))
 #+end_src
 
-Ruby Setup
+** Ruby Setup
 
-#+begin_src emacs-lisp :toggle yes
+#+begin_src emacs-lisp :tangle yes
   (use-package enh-ruby-mode
     :ensure t
     ;:straight enh-ruby-mode
@@ -366,9 +451,9 @@ Ruby Setup
   (setenv "CAPYBARA_INLINE_SCREENSHOT" "artifact")
 #+end_src
 
-EditorConfig integration
+** EditorConfig integration
 
-#+begin_src emacs-lisp :toggle yes
+#+begin_src emacs-lisp :tangle yes
   (use-package editorconfig
     :ensure t
     ;:straight editorconfig
@@ -376,9 +461,9 @@ EditorConfig integration
     (editorconfig-mode 1))
 #+end_src
 
-Markdown
+** Markdown
 
-#+begin_src emacs-lisp :toggle yes
+#+begin_src emacs-lisp :tangle yes
   (use-package markdown-mode
     :ensure t
     ;:straight markdown-mode
@@ -390,9 +475,9 @@ Markdown
     :init (setq markdown-command "multimarkdown"))
 #+end_src
 
-eBook reading
+** eBook reading
 
-#+begin_src emacs-lisp :toggle yes
+#+begin_src emacs-lisp :tangle yes
   (setq --reading-text-width 82)
   (defun --set-reading-margins ()
     "Disable line numbers and set margins to roughly centre text"
@@ -438,3 +523,4 @@ eBook reading
     :config
     (pdf-tools-install :no-query))
 #+end_src
+
