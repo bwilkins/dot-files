@@ -5,6 +5,7 @@ let
 
 in {
   imports = [
+    ./custom/emacs.nix
     ./custom/kitty.nix
     ./custom/i3.nix
     ./custom/rofi.nix
