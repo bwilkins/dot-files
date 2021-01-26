@@ -100,8 +100,8 @@ can get it to work, given it's a paid font, I don't want to accidentally make it
 
       ;; Else...
       (setq
-      --code-font "Source Code Pro-18"
-      --pretty-font "Libre Baskerville-18"
+      --code-font "Source Code Pro-16"
+      --pretty-font "Libre Baskerville-16"
       )
     )
 #+end_src
