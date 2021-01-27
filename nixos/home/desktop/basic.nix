@@ -17,6 +17,7 @@ in {
     discord
     gparted
     kitty
+    mattermost-desktop
     mpv
     pinta
     postman
