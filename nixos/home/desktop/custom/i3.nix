@@ -10,6 +10,7 @@ let
   echo = (lib.getBin pkgs.coreutils) + "/bin/echo";
   tee = (lib.getBin pkgs.coreutils) + "/bin/tee";
   pacmd = (lib.getBin pkgs.pulseaudio) + "/bin/pacmd";
+  rofi = (lib.getBin config.programs.rofi.package) + "/bin/rofi";
 in {
 
   home.packages = with pkgs; [
@@ -44,7 +45,7 @@ in {
         "${settings.font.monoFamily} ${settings.font.defaultSize.points}"
       ];
 
-      menu = "${lib.getBin pkgs.rofi}/bin/rofi -show run";
+      menu = "\"${rofi} -show combi -modi combi -combi-modi run,emoji\"";
       terminal = "kitty";
 
       keybindings = let
@@ -99,6 +100,8 @@ in {
 
         # Toggle between stacking/tabbed/split.
         "${modifier}+t" = "layout toggle";
+
+        "${modifier}+e" = "exec ${rofi} -show emoji";
       };
 
       gaps = {
