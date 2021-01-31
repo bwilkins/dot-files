@@ -13,6 +13,21 @@ let
   emacs-early-init = emacs-dir + "early-init.el";
   emacs-init = emacs-dir + "init.el";
   emacs-config = emacs-dir + "emacs.org";
+  my-emacs = with pkgs; (emacsWithPackagesFromUsePackage {
+    config = config.home.file.".emacs.d/emacs.org".target;
+    alwaysEnsure = true;
+    extraEmacsPackages = epkgs: with epkgs; [
+      company
+      evil
+      evil-leader
+      ivy
+      magit
+      org-plus-contrib
+      projectile
+      spacemacs-theme
+    ];
+  });
+
 in {
   nixpkgs.overlays = [ emacs-overlay ];
 
@@ -20,20 +35,12 @@ in {
   home.file.".emacs.d/init.el".source = emacs-init;
   home.file.".emacs.d/emacs.org".source = emacs-config;
 
-  home.packages = with pkgs; [
-    (emacsWithPackagesFromUsePackage {
-      config = config.home.file.".emacs.d/emacs.org".target;
-      alwaysEnsure = true;
-      extraEmacsPackages = epkgs: with epkgs; [
-        company
-        evil
-        evil-leader
-        ivy
-        magit
-        org-plus-contrib
-        projectile
-        spacemacs-theme
-      ];
-    })
+  services.emacs = {
+    enable = true;
+    package = my-emacs;
+  };
+
+  home.packages = [
+    my-emacs
   ];
 }
