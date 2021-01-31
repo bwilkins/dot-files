@@ -125,6 +125,12 @@ in {
         complete -d cd
       '';
     };
+
+    direnv = {
+      enable = true;
+      enableBashIntegration = true;
+      enableNixDirenvIntegration = true;
+    };
   };
 
   services = {
@@ -135,6 +141,10 @@ in {
       sshKeys = [
         settings.user.gpg.authenticationKey
       ];
+    };
+
+    lorri = {
+      enable = true;
     };
   };
 }
