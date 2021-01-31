@@ -167,6 +167,7 @@ in {
           "steam-original"
           "steam-runtime"
           "vscode"
+          "zoom"
         ];
       };
     };

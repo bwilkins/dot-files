@@ -28,6 +28,7 @@ in {
     sxiv
     yubikey-manager-qt
     zathura
+    zoom-us
   ];
 
   xsession = {
