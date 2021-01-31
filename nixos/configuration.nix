@@ -13,7 +13,16 @@ in {
     <home-manager/nixos>
   ];
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs = {
+    config.allowUnfree = true;
+    overlays = [
+      (import ./pkgs/default.nix)
+    ];
+  };
+  nix.extraOptions = ''
+    keep-outputs = true
+    keep-derivations = true
+  '';
 
   # Use the GRUB2 boot loader.
   boot = {
