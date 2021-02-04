@@ -30,14 +30,23 @@ in {
 
     extraConfig = ''
       set $web      "1:"
-      set $code     "2:"
-      set $code-alt "3:"
-      set $files    "4:"
-      set $chat     "5:"
-      set $open     "6:"
-      set $open-alt "7:"
-      set $music    "8:"
+      set $chat     "2:"
+      set $code     "3:"
+      set $four     "4"
+      set $five     "5"
+      set $six      "6"
+      set $seven    "7"
+      set $eight    "8"
       set $games    "9:"
+
+      assign [class="Mozilla Firefox$"] $web
+      assign [class="^Slack"] $chat
+      assign [class="^Discord$"] $chat
+      assign [class="Mattermost$"] $chat
+      assign [class="^Signal$"] $chat
+
+      workspace $web output primary
+      exec firefox-sandboxed
     '';
 
     config = {
@@ -53,25 +62,25 @@ in {
       in lib.mkOptionDefault {
         # Switch to workspace.
         "${modifier}+1"   = "workspace $web";
-        "${modifier}+2"   = "workspace $code";
-        "${modifier}+3"   = "workspace $code-alt";
-        "${modifier}+4"   = "workspace $files";
-        "${modifier}+5"   = "workspace $chat";
-        "${modifier}+6"   = "workspace $open";
-        "${modifier}+7"   = "workspace $open-alt";
-        "${modifier}+8"   = "workspace $music";
+        "${modifier}+2"   = "workspace $chat";
+        "${modifier}+3"   = "workspace $code";
+        "${modifier}+4"   = "workspace $four";
+        "${modifier}+5"   = "workspace $five";
+        "${modifier}+6"   = "workspace $six";
+        "${modifier}+7"   = "workspace $seven";
+        "${modifier}+8"   = "workspace $eight";
         "${modifier}+9"   = "workspace $games";
         "${modifier}+Tab" = "workspace back_and_forth";
 
         # Move applications to another workspace.
         "${modifier}+Shift+1" = "move container to workspace $web";
-        "${modifier}+Shift+2" = "move container to workspace $code";
-        "${modifier}+Shift+3" = "move container to workspace $code-alt";
-        "${modifier}+Shift+4" = "move container to workspace $files";
-        "${modifier}+Shift+5" = "move container to workspace $chat";
-        "${modifier}+Shift+6" = "move container to workspace $open";
-        "${modifier}+Shift+7" = "move container to workspace $open-alt";
-        "${modifier}+Shift+8" = "move container to workspace $music";
+        "${modifier}+Shift+2" = "move container to workspace $chat";
+        "${modifier}+Shift+3" = "move container to workspace $code";
+        "${modifier}+Shift+4" = "move container to workspace $four";
+        "${modifier}+Shift+5" = "move container to workspace $five";
+        "${modifier}+Shift+6" = "move container to workspace $six";
+        "${modifier}+Shift+7" = "move container to workspace $seven";
+        "${modifier}+Shift+8" = "move container to workspace $eight";
         "${modifier}+Shift+9" = "move container to workspace $games";
 
         # Move current window within the current workspace.
