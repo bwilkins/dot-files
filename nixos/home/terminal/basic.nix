@@ -41,6 +41,12 @@ in {
       delta = {
         enable = true;
       };
+
+      extraConfig = {
+        pull = {
+          ff = "only";
+        };
+      };
     };
 
     htop = {
