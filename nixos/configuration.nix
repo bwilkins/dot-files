@@ -188,6 +188,7 @@ in {
     nfs-utils
     pciutils
     usbutils
+    libcamlink
   ] ++ [
     chromium
     firefox
@@ -198,7 +199,12 @@ in {
     enable = true;
 
     wrappedBinaries = {
-      firefox-sandboxed = "${lib.getBin pkgs.firefox}/bin/firefox";
+      firefox-sandboxed = {
+        executable = "${lib.getBin pkgs.firefox}/bin/firefox";
+        extraArgs = [
+          "--env=LD_PRELOAD='${lib.getBin pkgs.libcamlink}/lib/camlink.so'"
+        ];
+      };
     };
   };
 
