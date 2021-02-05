@@ -1,8 +1,16 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, config, ... }:
 
 let
   settings = import ../../settings.nix;
 
+  gpg-agent-config = {
+    enable = if pkgs.stdenvNoCC.isDarwin then false else true;
+    enableSshSupport = true;
+    enableScDaemon = true;
+    sshKeys = [
+      settings.user.gpg.authenticationKey
+    ];
+  };
 in {
   imports = [
     ./custom/neovim.nix
@@ -59,13 +67,14 @@ in {
       enable = true;
     };
 
+    fish = {
+      enable = true;
+    };
+
     bash = {
       enable = true;
       sessionVariables = {
         EDITOR = "vim";
-        BASH_IT = ''''${HOME}/.bash_it'';
-        BASH_IT_THEME = "powerline";
-        POWERLINE_PROMPT = "user_info scm cwd";
       };
 
       shellAliases = {
@@ -77,8 +86,6 @@ in {
 
       initExtra = ''
         unset MAILCHECK
-
-        source $BASH_IT/bash_it.sh
 
         if [ -a "''${HOME}/.bash_env" ]; then
           source "''${HOME}/.bash_env"
@@ -149,18 +156,21 @@ in {
       enableBashIntegration = true;
       enableNixDirenvIntegration = true;
     };
+
+    starship = {
+      enable = true;
+      enableBashIntegration = true;
+      settings = {
+        add_newline = true;
+        line_break.disabled = true;
+      };
+    };
   };
 
-  services = {
-    gpg-agent = {
-      enable = if pkgs.stdenvNoCC.isDarwin then false else true;
-      enableSshSupport = true;
-      enableScDaemon = true;
-      sshKeys = [
-        settings.user.gpg.authenticationKey
-      ];
-    };
-
+  services = if pkgs.stdenvNoCC.isDarwin then {
+    gpg-agent = gpg-agent-config;
+  } else {
+    gpg-agent = gpg-agent-config;
     lorri = {
       enable = true;
     };
