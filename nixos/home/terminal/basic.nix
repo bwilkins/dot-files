@@ -9,18 +9,20 @@ in {
   ];
 
   home.packages = with pkgs; [
+    coreutils
     curl
     du-dust
     exa
     fd
     fzy
     gnupg
+    htop
+    (if stdenvNoCC.isDarwin then pinentry_mac else pinentry)
     ripgrep
     sqlite
     tig
     unzip
     wget
-    pinentry
   ];
 
   programs = {
@@ -61,6 +63,9 @@ in {
       enable = true;
       sessionVariables = {
         EDITOR = "vim";
+        BASH_IT = ''''${HOME}/.bash_it'';
+        BASH_IT_THEME = "powerline";
+        POWERLINE_PROMPT = "user_info scm cwd";
       };
 
       shellAliases = {
@@ -68,10 +73,17 @@ in {
         bi = "bundle install";
         ls = "exa";
         find = "fd";
-        open = "xdg-open";
       };
 
       initExtra = ''
+        unset MAILCHECK
+
+        source $BASH_IT/bash_it.sh
+
+        if [ -a "''${HOME}/.bash_env" ]; then
+          source "''${HOME}/.bash_env"
+        fi
+
         # Replace cd with pushd https://gist.github.com/mbadran/130469
         function push_cd() {
           # typing just `push_cd` will take you $HOME ;)
@@ -141,7 +153,7 @@ in {
 
   services = {
     gpg-agent = {
-      enable = true;
+      enable = if pkgs.stdenvNoCC.isDarwin then false else true;
       enableSshSupport = true;
       enableScDaemon = true;
       sshKeys = [

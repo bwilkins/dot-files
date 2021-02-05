@@ -8,6 +8,7 @@
     withPython = false;
     withPython3 = true;
 
+    viAlias = true;
     vimAlias = true;
 
     plugins = with pkgs.vimPlugins; [
