@@ -121,7 +121,7 @@
       \ 'file': '\.sublime-\w*',
       \ }
 
-      nmap <C-t> :FuzzyOpen<cr>
+      nmap <C-p> :FuzzyOpen<cr>
 
 
       " Save on focus lost
