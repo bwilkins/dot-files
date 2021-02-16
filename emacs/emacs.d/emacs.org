@@ -248,33 +248,25 @@ Newer version of linum-mode (faster than linum?)
 
 *** Auto-complete
 
-**** Grizzl
-Use grizzl for auto-completion
-#+begin_src emacs-lisp :tangle yes
-  (use-package grizzl
-    :ensure t
-    :config
-    (setq projectile-completion-system 'grizzl))
-#+end_src
-
 **** Ivy
 Apparently also using ivy for autocompletion?
 
 #+begin_src emacs-lisp :tangle yes
-  (use-package ivy
-    :ensure t
-    :config
-    (ivy-mode 1)
-    (setq ivy-use-virtual-buffers t)
-    (setq enable-recursive-minibuffers t)
-    (use-package projectile
+    (use-package ivy
       :ensure t
-      :init
-      :defer 1
       :config
-      (projectile-mode)
-      (evil-leader/set-key "pf" 'projectile-find-file)
-      (evil-leader/set-key "pg" 'projectile-grep)))
+      (ivy-mode 1)
+      (setq ivy-use-virtual-buffers t)
+      (setq enable-recursive-minibuffers t)
+      (setq projectile-completion-system 'ivy))
+      (use-package projectile
+	:ensure t
+	:init
+	:defer 1
+	:config
+	(projectile-mode)
+	(evil-leader/set-key "pf" 'projectile-find-file)
+	(evil-leader/set-key "pg" 'projectile-grep)))
 #+end_src
 
 **** CompAny
