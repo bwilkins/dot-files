@@ -16,7 +16,12 @@ in {
     ./custom/neovim.nix
   ];
 
+  nixpkgs.overlays = [
+    (import ../../pkgs)
+  ];
+
   home.packages = with pkgs; [
+    bundix
     coreutils
     curl
     du-dust
@@ -25,6 +30,7 @@ in {
     fzy
     gnupg
     htop
+    keylightctl
     (if stdenvNoCC.isDarwin then pinentry_mac else pinentry)
     ripgrep
     sqlite
@@ -55,6 +61,9 @@ in {
       extraConfig = {
         pull = {
           ff = "only";
+        };
+        core = {
+          excludesfile = "~/.gitignore_global";
         };
       };
     };
@@ -148,6 +157,8 @@ in {
         # replace standard `cd` with enhanced version, ensure tab-completion works
         alias cd=push_cd
         complete -d cd
+
+        export PATH="$PATH:$HOME/bin/"
       '';
     };
 
@@ -163,6 +174,11 @@ in {
       settings = {
         add_newline = true;
         line_break.disabled = true;
+        package.disabled = true;
+        rust.format = "$symbol ";
+        nix_shell.format = "$symbol ";
+        ruby.format = "$symbol ";
+        nodejs.format = "$symbol ";
       };
     };
   };

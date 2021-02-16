@@ -15,9 +15,6 @@ in {
 
   nixpkgs = {
     config.allowUnfree = true;
-    overlays = [
-      (import ./pkgs/default.nix)
-    ];
   };
   nix.extraOptions = ''
     keep-outputs = true
@@ -78,6 +75,7 @@ in {
 
     avahi = {
       enable = true;
+      nssmdns = true;
     };
 
     xserver = {
@@ -99,6 +97,14 @@ in {
     udev = {
       packages = [ pkgs.yubikey-personalization ];
     };
+
+    postgresql = {
+      enable = true;
+      package = pkgs.postgresql96;
+      enableTCPIP = true;
+    };
+
+    redis.enable = true;
   };
 
   hardware = {
@@ -188,7 +194,6 @@ in {
     nfs-utils
     pciutils
     usbutils
-    libcamlink
   ] ++ [
     chromium
     firefox
@@ -201,9 +206,6 @@ in {
     wrappedBinaries = {
       firefox-sandboxed = {
         executable = "${lib.getBin pkgs.firefox}/bin/firefox";
-        extraArgs = [
-          "--env=LD_PRELOAD='${lib.getBin pkgs.libcamlink}/lib/camlink.so'"
-        ];
       };
     };
   };

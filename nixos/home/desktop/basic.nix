@@ -18,6 +18,7 @@ in {
     gparted
     kitty
     mattermost-desktop
+    maim
     mpv
     pinta
     postman
@@ -26,6 +27,7 @@ in {
     spotify
     steam
     sxiv
+    xclip
     yubikey-manager-qt
     zathura
     zoom-us
