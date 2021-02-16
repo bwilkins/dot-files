@@ -252,21 +252,21 @@ Newer version of linum-mode (faster than linum?)
 Apparently also using ivy for autocompletion?
 
 #+begin_src emacs-lisp :tangle yes
-    (use-package ivy
-      :ensure t
-      :config
-      (ivy-mode 1)
-      (setq ivy-use-virtual-buffers t)
-      (setq enable-recursive-minibuffers t)
-      (setq projectile-completion-system 'ivy))
-      (use-package projectile
+      (use-package ivy
 	:ensure t
-	:init
-	:defer 1
 	:config
-	(projectile-mode)
-	(evil-leader/set-key "pf" 'projectile-find-file)
-	(evil-leader/set-key "pg" 'projectile-grep)))
+	(ivy-mode 1)
+	(setq ivy-use-virtual-buffers t)
+	(setq enable-recursive-minibuffers t)
+	(use-package projectile
+	  :ensure t
+	  :init
+	  :defer 1
+	  :config
+	  (projectile-mode)
+	  (evil-leader/set-key "pf" 'projectile-find-file)
+	  (evil-leader/set-key "pg" 'projectile-grep)
+	  (setq projectile-completion-system 'ivy)))
 #+end_src
 
 **** CompAny
@@ -278,6 +278,9 @@ TIL I have at least 3 different auto-completion tools in my emacs config. wow.
     :ensure t
     :config
     (add-hook 'after-init-hook 'global-company-mode))
+  (use-package company-box
+    :ensure t
+    :hook (company-mode . company-box-mode))
 #+end_src
 
 *** Theming
