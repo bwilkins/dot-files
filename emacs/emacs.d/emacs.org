@@ -132,6 +132,14 @@ can get it to work, given it's a paid font, I don't want to accidentally make it
 #+end_src
 
 
+** Custom
+
+Where custom-set-variables etc should be written to and loaded from
+
+#+begin_src emacs-lisp :tangle yes
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (load custom-file)
+#+end_src
 * Package setup
 
 ** Persistent Scratch
@@ -319,7 +327,7 @@ Setup the fonts that we selected back in the [[Variables / Fonts][Variables / Fo
 #+end_src
 
 ** Magit Setup
-   
+
 The best git interface I've ever used, period.
 
 #+begin_src emacs-lisp :tangle yes
@@ -396,7 +404,7 @@ The best git interface I've ever used, period.
 
 ** DirEnv
 
-#+begin_src emacs-lisp :tangle yes 
+#+begin_src emacs-lisp :tangle yes
   (use-package direnv
     :init
     (add-hook 'prog-mode-hook #'direnv-update-environment)
@@ -408,42 +416,42 @@ The best git interface I've ever used, period.
 ** Language Server Protocol
 
 #+begin_src emacs-lisp :tangle yes
-    (use-package lsp-mode
-      :after (direnv evil)
-      :config
-      ; Prefer LSP
-      (setq lsp-prefer-flymake nil)
-      ; LSP will watch all files in the project
-  ; directory by default, so we eliminate some
-  ; of the irrelevant ones here, most notable
-  ; the .direnv folder which will contain *a lot*
-  ; of Nix-y noise we don't want indexed.
-  (setq lsp-file-watch-ignored '(
-    "[/\\\\]\\.direnv$"
-    ; SCM tools
-    "[/\\\\]\\.git$"
-    "[/\\\\]\\.hg$"
-    "[/\\\\]\\.bzr$"
-    "[/\\\\]_darcs$"
-    "[/\\\\]\\.svn$"
-    "[/\\\\]_FOSSIL_$"
-    ; IDE tools
-    "[/\\\\]\\.idea$"
-    "[/\\\\]\\.ensime_cache$"
-    "[/\\\\]\\.eunit$"
-    "[/\\\\]node_modules$"
-    "[/\\\\]\\.fslckout$"
-    "[/\\\\]\\.tox$"
-    "[/\\\\]\\.stack-work$"
-    "[/\\\\]\\.bloop$"
-    "[/\\\\]\\.metals$"
-    "[/\\\\]target$"
-    ; Autotools output
-    "[/\\\\]\\.deps$"
-    "[/\\\\]build-aux$"
-    "[/\\\\]autom4te.cache$"
-    "[/\\\\]\\.reference$"))
-  )
+  (use-package lsp-mode
+    :after (direnv evil)
+    :config
+    ; Prefer LSP
+    (setq lsp-prefer-flymake nil)
+    ; LSP will watch all files in the project
+    ; directory by default, so we eliminate some
+    ; of the irrelevant ones here, most notable
+    ; the .direnv folder which will contain *a lot*
+    ; of Nix-y noise we don't want indexed.
+    (setq lsp-file-watch-ignored '(
+      "[/\\\\]\\.direnv$"
+      ; SCM tools
+      "[/\\\\]\\.git$"
+      "[/\\\\]\\.hg$"
+      "[/\\\\]\\.bzr$"
+      "[/\\\\]_darcs$"
+      "[/\\\\]\\.svn$"
+      "[/\\\\]_FOSSIL_$"
+      ; IDE tools
+      "[/\\\\]\\.idea$"
+      "[/\\\\]\\.ensime_cache$"
+      "[/\\\\]\\.eunit$"
+      "[/\\\\]node_modules$"
+      "[/\\\\]\\.fslckout$"
+      "[/\\\\]\\.tox$"
+      "[/\\\\]\\.stack-work$"
+      "[/\\\\]\\.bloop$"
+      "[/\\\\]\\.metals$"
+      "[/\\\\]target$"
+      ; Autotools output
+      "[/\\\\]\\.deps$"
+      "[/\\\\]build-aux$"
+      "[/\\\\]autom4te.cache$"
+      "[/\\\\]\\.reference$"))
+    )
 
 #+end_src
 
