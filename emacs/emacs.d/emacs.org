@@ -271,8 +271,6 @@ Apparently also using ivy for autocompletion?
 
 **** CompAny
 
-TIL I have at least 3 different auto-completion tools in my emacs config. wow.
-
 #+begin_src emacs-lisp :tangle yes
   (use-package company
     :ensure t
@@ -281,6 +279,8 @@ TIL I have at least 3 different auto-completion tools in my emacs config. wow.
   (use-package company-box
     :ensure t
     :hook (company-mode . company-box-mode))
+  (use-package company-lsp
+    :defer t)
 #+end_src
 
 *** Theming
@@ -394,60 +394,114 @@ The best git interface I've ever used, period.
   ;   (add-hook 'org-capture-after-finalize-hook 'org-gcal-fetch))
 #+end_src
 
+** DirEnv
+
+#+begin_src emacs-lisp :tangle yes 
+  (use-package direnv
+    :init
+    (add-hook 'prog-mode-hook #'direnv-update-environment)
+    :config
+    (direnv-mode))
+#+end_src
+
+
+** Language Server Protocol
+
+#+begin_src emacs-lisp :tangle yes
+    (use-package lsp-mode
+      :after (direnv evil)
+      :config
+      ; Prefer LSP
+      (setq lsp-prefer-flymake nil)
+      ; LSP will watch all files in the project
+  ; directory by default, so we eliminate some
+  ; of the irrelevant ones here, most notable
+  ; the .direnv folder which will contain *a lot*
+  ; of Nix-y noise we don't want indexed.
+  (setq lsp-file-watch-ignored '(
+    "[/\\\\]\\.direnv$"
+    ; SCM tools
+    "[/\\\\]\\.git$"
+    "[/\\\\]\\.hg$"
+    "[/\\\\]\\.bzr$"
+    "[/\\\\]_darcs$"
+    "[/\\\\]\\.svn$"
+    "[/\\\\]_FOSSIL_$"
+    ; IDE tools
+    "[/\\\\]\\.idea$"
+    "[/\\\\]\\.ensime_cache$"
+    "[/\\\\]\\.eunit$"
+    "[/\\\\]node_modules$"
+    "[/\\\\]\\.fslckout$"
+    "[/\\\\]\\.tox$"
+    "[/\\\\]\\.stack-work$"
+    "[/\\\\]\\.bloop$"
+    "[/\\\\]\\.metals$"
+    "[/\\\\]target$"
+    ; Autotools output
+    "[/\\\\]\\.deps$"
+    "[/\\\\]build-aux$"
+    "[/\\\\]autom4te.cache$"
+    "[/\\\\]\\.reference$"))
+  )
+
+#+end_src
+
 ** Ruby
 
 #+begin_src emacs-lisp :tangle yes
-  (use-package enh-ruby-mode
-    :ensure t
-    ;:straight enh-ruby-mode
-    :config
+  (setq lsp-solargraph-multi-root nil)
+  ; (use-package enh-ruby-mode
+  ;   :ensure t
+  ;   ;:straight enh-ruby-mode
+  ;   :config
 
-    (use-package rspec-mode
-      :ensure t
-      ;:straight rspec-mode
-      )
+  ;   (use-package rspec-mode
+  ;     :ensure t
+  ;     ;:straight rspec-mode
+  ;     )
 
-    (use-package robe
-      :ensure t
-      ;:straight robe
-      )
+  ;   (use-package robe
+  ;     :ensure t
+  ;     ;:straight robe
+  ;     )
 
-    (use-package ruby-end
-      :ensure t
-      ;:straight ruby-end
-      :defer 1)
+  ;   (use-package ruby-end
+  ;     :ensure t
+  ;     ;:straight ruby-end
+  ;     :defer 1)
 
-    (use-package rbenv
-      :ensure t
-      ;:straight rbenv
-      :config
-      (global-rbenv-mode))
-    (use-package inf-ruby
-      :ensure t
-      ;:straight inf-ruby
-      :config
+  ;   (use-package rbenv
+  ;     :ensure t
+  ;     ;:straight rbenv
+  ;     :config
+  ;     (global-rbenv-mode))
+  ;   (use-package inf-ruby
+  ;     :ensure t
+  ;     ;:straight inf-ruby
+  ;     :config
 
-      (defun comint-goto-end-and-insert ()
-        (interactive)
-        (if (not (comint-after-pmark-p))
-  	  (progn (comint-goto-process-mark)
-  		 (evil-append-line nil))
-  	(evil-insert 1)))
-      (evil-define-key 'normal comint-mode-map "i" 'comint-goto-end-and-insert)
-      (evil-define-key 'normal inf-ruby-mode-map "i" 'comint-goto-end-and-insert)
+  ;     (defun comint-goto-end-and-insert ()
+  ;       (interactive)
+  ;       (if (not (comint-after-pmark-p))
+  ; 	  (progn (comint-goto-process-mark)
+  ; 		 (evil-append-line nil))
+  ; 	(evil-insert 1)))
+  ;     (evil-define-key 'normal comint-mode-map "i" 'comint-goto-end-and-insert)
+  ;     (evil-define-key 'normal inf-ruby-mode-map "i" 'comint-goto-end-and-insert)
 
-      (evil-define-key 'insert comint-mode-map
-        (kbd "<up>") 'comint-previous-input
-        (kbd "<down>") 'comint-next-input)))
+  ;     (evil-define-key 'insert comint-mode-map
+  ;       (kbd "<up>") 'comint-previous-input
+  ;       (kbd "<down>") 'comint-next-input)))
 
-  (add-hook 'enh-ruby-mode-hook 'robe-mode)
-  (eval-after-load 'company
-    '(push 'company-robe company-backends))
-  (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
-  (add-hook 'compilation-filter-hook 'inf-ruby-auto-enter)
-  (add-hook 'dired-mode-hook 'rspec-dired-mode)
+  ; (add-hook 'enh-ruby-mode-hook 'robe-mode)
+  ; (eval-after-load 'company
+  ;   '(push 'company-robe company-backends))
+  ; (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
+  ; (add-hook 'compilation-filter-hook 'inf-ruby-auto-enter)
+  ; (add-hook 'dired-mode-hook 'rspec-dired-mode)
 
-  (setenv "CAPYBARA_INLINE_SCREENSHOT" "artifact")
+  ; (setenv "CAPYBARA_INLINE_SCREENSHOT" "artifact")
 #+end_src
 
 ** EditorConfig integration
