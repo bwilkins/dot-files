@@ -286,8 +286,6 @@ Apparently also using ivy for autocompletion?
   (use-package company-box
     :ensure t
     :hook (company-mode . company-box-mode))
-  (use-package company-lsp
-    :defer t)
 #+end_src
 
 *** Theming
@@ -410,8 +408,13 @@ The best git interface I've ever used, period.
     :config
     (direnv-mode))
 #+end_src
+** Flycheck
 
-
+#+begin_src emacs-lisp :tangle yes
+  (use-package flycheck
+    :init
+    (global-flycheck-mode))
+#+end_src
 ** Language Server Protocol
 
 #+begin_src emacs-lisp :tangle yes
