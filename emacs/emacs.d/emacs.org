@@ -138,7 +138,6 @@ Where custom-set-variables etc should be written to and loaded from
 
 #+begin_src emacs-lisp :tangle yes
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-  (load custom-file)
 #+end_src
 * Package setup
 
