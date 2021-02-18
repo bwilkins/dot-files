@@ -226,7 +226,7 @@ I'm told this will be useful if I want to use scratch buffers more
 #+end_src
 
 ** UI Setup
-
+   
 *** Dired
 Now that evil-mode is setup, here's a vim-style shortcut for dired-mode
 
@@ -323,6 +323,12 @@ Setup the fonts that we selected back in the [[Variables / Fonts][Variables / Fo
   (set-face-attribute 'variable-pitch t :font --pretty-font)
 #+end_src
 
+*** Diminish
+    
+#+begin_src emacs-lisp :tangle yes
+  (use-package diminish
+    :ensure t)
+#+end_src
 ** Magit Setup
 
 The best git interface I've ever used, period.
@@ -343,15 +349,86 @@ The best git interface I've ever used, period.
     ;:straight org-plus-contrib
     )
 
-  (use-package org-journal
-    :ensure t
-    ;:straight org-journal
-    :custom
-    (org-journal-dir (concat --org-home "journal/"))
-    (org-journal-date-format "%A, %d %B %Y")
+  (use-package org-protocol
+    :ensure org-plus-contrib
     :config
-    (evil-leader/set-key "jj" 'org-journal-new-entry)
+    (defun --org-protocol-capture-p ()
+      "Return true if this capture was initiated via org-protocol."
+      (equal "emacs-capture" (frame-parameter nil 'name)))
+    (defun --org-capture-delete-frame ()
+      "Delete frame if capture was initiated via org-protocol."
+      (when (--org-protocol-capture-p)
+	(delete-frame)))
+
+    (defun --org-capture-delete-other-windows ()
+      "Make sure frame has only one window if capture was initiated via org-protocol."
+      (when (--org-protocol-capture-p)
+	(delete-other-windows)))
+
+    (add-hook 'org-capture-mode-hook '--org-capture-delete-other-windows)
+    (add-hook 'org-capture-after-finalize-hook '--org-capture-delete-frame)
+
+    (defadvice org-switch-to-buffer-other-window (after org-capture-supress-window-splitting activate)
+      "Delete the extra window if we're in a capture frame."
+      (--org-capture-delete-other-windows))
+
+    (defadvice org-capture (around org-capture-protocol-ignore-error activate)
+      "If in emacs-capture buffer, ignore errors when quitting capture."
+      (if (--org-protocol-capture-p)
+	  (unless (ignore-errors ad-do-it t)
+	    (--org-capture-delete-frame))
+	ad-do-it)))
+
+  (use-package org-capture
+    :ensure org-plus-contrib
+    :defer t
+    ;:bind
+    ; Add emacs-specific keybindings here
+    :config
+    (defun --current-day-journal-file ()
+      "Returns the path to the journal file for today"
+      (concat --org-home "journal/"
+	    (format-string "%s.org"
+			 (format-time-string "%Y-%m-%d")))
     )
+
+    (setq --timekeeping-file (concat --org-home "timekeeping/work.org"))
+    (defun --get-timekeeping-options ()
+      "Return headings from timekeeping file as list"
+      (mapcar
+       (lambda (x) (elt x 4))
+       (seq-filter
+	(lambda (seq) (eq 1 (car seq)))
+	(org-map-entries (lambda () (org-heading-components)) nil (list --timekeeping-file))
+       ))
+      )
+
+    (defun --ask-for-and-goto-clock-heading ()
+      (interactive)
+	(let ( (selection (ivy-read "Clocking into:" (--get-timekeeping-options))))
+	(goto-char (point-min))
+	(search-forward (concat "* " selection))
+        )
+      )
+
+    (setq org-capture-templates
+	  '(
+	  ("j" "Journal")
+	  ("jj" "New Entry" entry (file+datetree (--current-day-journal-file) "* %u %?"))
+	  ("c" "Clocks (AKA timekeeping)")
+	  ("ci" "Clock In" plain (file+function --timekeeping-file --ask-for-and-goto-clock-heading) "" :clock-in t :immediate-finish t)
+	    ))
+  )
+
+  ; (use-package org-journal
+  ;   :ensure t
+  ;   ;:straight org-journal
+  ;   :custom
+  ;   (org-journal-dir (concat --org-home "journal/"))
+  ;   (org-journal-date-format "%A, %d %B %Y")
+  ;   :config
+  ;   (evil-leader/set-key "jj" 'org-journal-new-entry)
+  ;   )
 
   (use-package org-roam
     :ensure t
@@ -361,11 +438,11 @@ The best git interface I've ever used, period.
     (org-roam-directory (concat --org-home "roam/"))
 
     :bind (:map org-roam-mode-map
-  	      (("C-c n l" . org-roam)
-  	       ("C-c n f" . org-roam-find-file)
-  	       ("C-c n g" . org-roam-show-graph))
-  	      :map org-mode-map
-  	      (("C-c n i" . org-roam-insert)))
+	      (("C-c n l" . org-roam)
+	       ("C-c n f" . org-roam-find-file)
+	       ("C-c n g" . org-roam-show-graph))
+	      :map org-mode-map
+	      (("C-c n i" . org-roam-insert)))
     :config
 
     (evil-leader/set-key "ar" 'org-roam)
