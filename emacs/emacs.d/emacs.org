@@ -131,7 +131,6 @@ can get it to work, given it's a paid font, I don't want to accidentally make it
         )
 #+end_src
 
-
 ** Custom
 
 Where custom-set-variables etc should be written to and loaded from
@@ -394,7 +393,9 @@ The best git interface I've ever used, period.
 
     (setq --timekeeping-file (concat --org-home "timekeeping/work.org"))
     (defun --get-timekeeping-options ()
-      "Return headings from timekeeping file as list"
+      "Return headings from timekeeping file as list; does not need to be in
+       the timekeeping file at the time.
+      "
       (mapcar
        (lambda (x) (elt x 4))
        (seq-filter
@@ -408,8 +409,33 @@ The best git interface I've ever used, period.
 	(let ( (selection (ivy-read "Clocking into:" (--get-timekeeping-options))))
 	(goto-char (point-min))
 	(search-forward (concat "* " selection))
-        )
+	)
       )
+
+    (defun --clock-out ()
+      (find-file --timekeeping-file)
+      (hide-sublevels 1)
+      (org-clock-goto)
+      (outline-show-subtree)
+      (org-clock-out)
+      (save-buffer)
+    )
+
+    (defun --clock-in ()
+      (interactive)
+      (find-file --timekeeping-file)
+      (--ask-for-and-goto-clock-heading)
+      (outline-show-subtree)
+      (org-clock-in)
+      (save-buffer)
+    )
+
+    (defun --autoclose (secs func)
+      (interactive)
+      (funcall-interactively func)
+      (run-with-timer secs nil
+	(lambda () (--org-capture-delete-frame)))
+    )
 
     (setq org-capture-templates
 	  '(
@@ -419,16 +445,6 @@ The best git interface I've ever used, period.
 	  ("ci" "Clock In" plain (file+function --timekeeping-file --ask-for-and-goto-clock-heading) "" :clock-in t :immediate-finish t)
 	    ))
   )
-
-  ; (use-package org-journal
-  ;   :ensure t
-  ;   ;:straight org-journal
-  ;   :custom
-  ;   (org-journal-dir (concat --org-home "journal/"))
-  ;   (org-journal-date-format "%A, %d %B %Y")
-  ;   :config
-  ;   (evil-leader/set-key "jj" 'org-journal-new-entry)
-  ;   )
 
   (use-package org-roam
     :ensure t
