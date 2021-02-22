@@ -14,6 +14,7 @@ in {
 
   home.packages = with pkgs; [
     _1password-gui
+    calibre
     discord
     gparted
     kitty
