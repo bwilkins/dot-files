@@ -45,7 +45,8 @@ in {
       assign [class="Mattermost$"] $chat
       assign [class="^Signal$"] $chat
 
-      workspace $web output primary
+      for_window [title="emacs-capture"] floating enable
+
       exec firefox-sandboxed
     '';
 
