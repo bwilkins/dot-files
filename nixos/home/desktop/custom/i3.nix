@@ -39,9 +39,9 @@ in {
       set $eight    "8"
       set $games    "9:"
 
-      assign [class="Mozilla Firefox$"] $web
+      assign [class="Mozilla Firefox"] $web
       assign [class="^Slack"] $chat
-      assign [class="^Discord$"] $chat
+      assign [class="Discord$"] $chat
       assign [class="Mattermost$"] $chat
       assign [class="^Signal$"] $chat
 
