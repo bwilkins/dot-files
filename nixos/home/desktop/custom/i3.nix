@@ -102,15 +102,10 @@ in {
         # Kill current window.
         "${modifier}+w" = "kill";
 
-        # Split window horizontally.
-        # "${modifier}+x" = "split h";
-
-        # Split window verticalally.
-        # "${modifier}+v" = "split v";
-
         # Toggle between stacking/tabbed/split.
         "${modifier}+t" = "layout toggle";
 
+        # Emoji "keyboard"
         "${modifier}+e" = "exec ${rofi} -show emoji";
       };
 
@@ -189,7 +184,6 @@ in {
               volume_muted = "🔇";
               volume_half = "🔉";
               volume_full = "🔊";
-              time = "🕓";
             };
           };
         };
