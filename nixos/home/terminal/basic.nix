@@ -39,6 +39,8 @@ in {
     wget
   ];
 
+  home.sessionPath = ["$HOME/bin" "${config.xdg.dataHome}/bin"];
+
   programs = {
     bat = {
       enable = true;
@@ -157,8 +159,6 @@ in {
         # replace standard `cd` with enhanced version, ensure tab-completion works
         alias cd=push_cd
         complete -d cd
-
-        export PATH="$PATH:$HOME/bin/"
       '';
     };
 
