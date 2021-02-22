@@ -225,7 +225,7 @@ I'm told this will be useful if I want to use scratch buffers more
 #+end_src
 
 ** UI Setup
-   
+
 *** Dired
 Now that evil-mode is setup, here's a vim-style shortcut for dired-mode
 
@@ -323,7 +323,7 @@ Setup the fonts that we selected back in the [[Variables / Fonts][Variables / Fo
 #+end_src
 
 *** Diminish
-    
+
 #+begin_src emacs-lisp :tangle yes
   (use-package diminish
     :ensure t)
@@ -678,5 +678,8 @@ The best git interface I've ever used, period.
     :magic ("%PDF" . pdf-view-mode)
     :config
     (pdf-tools-install :no-query))
+
+  (use-package calibredb
+    )
 #+end_src
 
