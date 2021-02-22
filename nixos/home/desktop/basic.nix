@@ -20,6 +20,7 @@ in {
     mattermost-desktop
     maim
     mpv
+    jetbrains.ruby-mine
     pinta
     postman
     signal-desktop

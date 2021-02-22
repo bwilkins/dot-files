@@ -164,6 +164,7 @@ in {
           "dropbox"
           "firefox-bin"
           "firefox-release-bin-unwrapped"
+          "ruby-mine"
           "postman"
           "signal-desktop"
           "slack"
@@ -224,6 +225,7 @@ in {
       source-sans-pro
       source-serif-pro
       fira-code
+      jetbrains-mono
       twemoji-color-font
       libre-baskerville
       font-awesome (
