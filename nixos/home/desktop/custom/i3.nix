@@ -181,6 +181,9 @@ in {
               memory_mem = "💭 ";
               cpu = "🖥️ ";
               thermometer = "🌡️";
+              time = "🕓";
+              toggle_off = "🌑";
+              toggle_on = "💡";
               volume_empty = "🔈";
               volume_muted = "🔇";
               volume_half = "🔉";
@@ -191,6 +194,15 @@ in {
         };
 
         blocks = [
+          {
+            block = "toggle";
+            text = " Keylight";
+            command_on = ''curl -XPUT -d'{"numberOfLights": 1, "lights": [{ "on": 1 }]}' http://elgato-key-light-2404.local:9123/elgato/lights'';
+            command_off = ''curl -XPUT -d'{"numberOfLights": 1, "lights": [{ "on": 0 }]}' http://elgato-key-light-2404.local:9123/elgato/lights'';
+            command_state = ''bash -c 'light_status=$(curl http://elgato-key-light-2404.local:9123/elgato/lights      | jq .lights[0].on); if [ "$light_status" == "1" ]; then echo "on"; fi' '';
+            interval = 60;
+          }
+
           {
             block = "disk_space";
             path = "/";
