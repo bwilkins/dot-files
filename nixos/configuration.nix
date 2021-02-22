@@ -180,8 +180,8 @@ in {
     };
 
     imports = [
-      ./home/desktop/basic.nix
       ./home/terminal/basic.nix
+      ./home/desktop/basic.nix
     ];
   };
 
