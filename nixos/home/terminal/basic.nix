@@ -18,6 +18,8 @@ in {
 
   nixpkgs.overlays = [
     (import ../../pkgs)
+    (self: super: { notmuch = super.notmuch.overrideAttrs (_: { withEmacs = true; });})
+
   ];
 
   home.packages = with pkgs; [
@@ -31,6 +33,9 @@ in {
     gnupg
     htop
     keylightctl
+    offlineimap
+    notmuch
+    rofi-pass
     (if stdenvNoCC.isDarwin then pinentry_mac else pinentry)
     ripgrep
     sqlite
@@ -180,6 +185,148 @@ in {
         ruby.format = "$symbol ";
         nodejs.format = "$symbol ";
       };
+    };
+
+    password-store = {
+      enable = true;
+      package = pkgs.pass.withExtensions (exts: [exts.pass-otp /* exts.pass-import */]);
+      settings = {
+        PASSWORD_STORE_DIR = "$HOME/.password-store";
+      };
+    };
+
+    offlineimap = {
+      enable = true;
+
+      extraConfig.general = {
+        fsync = false;
+      };
+
+      pythonFile = ''
+        from subprocess import check_output
+
+        def get_pass(account, *args):
+          return check_output("pass Mail/" + account, shell=True).splitlines()[0]
+      '';
+    };
+
+    notmuch = {
+      enable = true;
+      hooks = {
+        preNew = ''
+          ${lib.getBin pkgs.offlineimap}/bin/offlineimap -o;
+        '';
+
+        postNew = ''
+          ${lib.getBin pkgs.afew}/bin/afew --tag --new
+        '';
+      };
+
+      new = {
+        tags = [ "new" ];
+      };
+    };
+
+    afew = {
+      enable = true;
+
+      extraConfig = ''
+        [FolderNameFilter]
+          folder_transforms = Sent\ Mail:sent Drafts:draft Trash:deleted Deleted\ Messages:deleted Bin:deleted Sent\ Messages:sent UnrealEngine.Spam:spam
+          folder_lowercases = true
+        [SpamFilter]
+        [KillThreadsFilter]
+        [ListMailsFilter]
+        [ArchiveSentMailsFilter]
+        [InboxFilter]
+      '';
+    };
+  };
+
+  accounts.email.maildirBasePath= "Mail";
+  accounts.email.accounts."brett@brett.geek.nz" = {
+    address  = "brett@brett.geek.nz";
+    userName = "brett@brett.geek.nz";
+    realName = "Brett Wilkins";
+    primary  = true;
+    passwordCommand = "";
+    imap = {
+      host = "imap.gmail.com";
+      port = 993;
+      tls = {
+        enable = true;
+        useStartTls = true;
+      };
+    };
+
+    maildir.path = "brett@brett.geek.nz";
+
+    offlineimap = {
+      enable = true;
+
+      extraConfig.remote = {
+        maxconnections = 3;
+      };
+    };
+
+    notmuch = {
+      enable = true;
+    };
+  };
+  accounts.email.accounts."bushido.katana@gmail.com" = {
+    address  = "bushido.katana@gmail.com";
+    userName = "bushido.katana@gmail.com";
+    realName = "Brett Wilkins";
+    passwordCommand = "";
+    imap = {
+      host = "imap.gmail.com";
+      port = 993;
+      tls = {
+        enable = true;
+        useStartTls = true;
+      };
+    };
+
+    maildir.path = "bushido.katana@gmail.com";
+
+    offlineimap = {
+      enable = true;
+
+      extraConfig.remote = {
+        maxconnections = 3;
+      };
+    };
+
+    notmuch = {
+      enable = true;
+    };
+  };
+  accounts.email.accounts."brett@cogent.co" = {
+    address  = "brett@cogent.co";
+    userName = "brett@cogent.co";
+    realName = "Brett Wilkins";
+    passwordCommand = "";
+    imap = {
+      host = "imap.gmail.com";
+      port = 993;
+      tls = {
+        enable = true;
+        useStartTls = true;
+      };
+    };
+
+    maildir.path = "brett@cogent.co";
+
+    offlineimap = {
+      enable = true;
+
+      extraConfig.remote = {
+        maxconnections = 3;
+      };
+    };
+
+    notmuch = {
+      enable = true;
     };
   };
 

@@ -2,6 +2,9 @@
 
 let
   settings = import ../../settings.nix;
+  nixpkgs-master = import (/home/brett/code/nixpkgs) {
+    config.allowUnfree = true;
+  };
 
 in {
   imports = [
@@ -9,19 +12,24 @@ in {
     ./custom/kitty.nix
     ./custom/i3.nix
     ./custom/rofi.nix
-    ./custom/vscode.nix
+    # ./custom/vscode.nix
   ];
+
+  nixpkgs.overlays = [(self: super: { discord = super.discord.overrideAttrs (_: { src = builtins.fetchTarball "https://dl.discordapp.net/apps/linux/0.0.14/discord-0.0.14.tar.gz"; });})];
 
   home.packages = with pkgs; [
     _1password-gui
     calibre
     discord
     gparted
+    flameshot
     kitty
     mattermost-desktop
     maim
     mpv
-    jetbrains.ruby-mine
+    nixpkgs-master.jetbrains.ruby-mine
+    obs-studio
+    obs-v4l2sink
     pinta
     postman
     signal-desktop
@@ -32,6 +40,7 @@ in {
     xclip
     yubikey-manager-qt
     zathura
+    zeal
     zoom-us
   ];
 
@@ -51,8 +60,8 @@ in {
         "application/pdf"               = "zathura.desktop";
         "image/jpeg"                    = "sxiv.desktop";
         "image/png"                     = "sxiv.desktop";
-        "x-scheme-handler/http"         = "firefox.desktop";
-        "x-scheme-handler/https"        = "firefox.desktop";
+        "x-scheme-handler/http"         = "brave.desktop";
+        "x-scheme-handler/https"        = "brave.desktop";
         "x-scheme-handler/org-protocol" = "emacs-capture.desktop";
       };
     };
@@ -100,7 +109,7 @@ in {
 
     # Add an audio effects manager.
     pulseeffects = {
-      enable = true;
+      enable = false; # Disable until pipewire is default, and/or I want/need this
     };
 
     # Set a background image.
@@ -117,6 +126,13 @@ in {
 
     dropbox = {
       enable = true;
+    };
+  };
+
+  programs = {
+    browserpass = {
+      enable = true;
+      browsers = [ "firefox" ];
     };
   };
 

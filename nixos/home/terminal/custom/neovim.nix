@@ -5,7 +5,6 @@
     enable = true;
 
     withRuby = false;
-    withPython = false;
     withPython3 = true;
 
     viAlias = true;

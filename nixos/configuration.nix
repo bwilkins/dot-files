@@ -48,7 +48,7 @@ in {
   };
 
   # Set your time zone.
-  time.timeZone = "Australia/Melbourne";
+  time.timeZone = "Australia/Brisbane";
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here. Per-interface useDHCP will be
   # mandatory in the future, so this generated config replicates the default behaviour.
@@ -64,7 +64,16 @@ in {
   #   keyMap = "us";
   # };
 
+  security.rtkit.enable = true;
   services = {
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      jack.enable = true;
+    };
+
     dbus = {
       enable = true;
 
@@ -96,6 +105,13 @@ in {
 
     udev = {
       packages = [ pkgs.yubikey-personalization ];
+      # Rules for streamdeck being accessible by libusb/normal users
+      extraRules = ''
+        SUBSYSTEM=="usb", ATTR{idVendor}=="0fd9", ATTR{idProduct}=="0060", MODE="0660", GROUP="wheel"
+        SUBSYSTEM=="usb", ATTR{idVendor}=="0fd9", ATTR{idProduct}=="0063", MODE="0660", GROUP="wheel"
+        SUBSYSTEM=="usb", ATTR{idVendor}=="0fd9", ATTR{idProduct}=="006c", MODE="0660", GROUP="wheel"
+        SUBSYSTEM=="usb", ATTR{idVendor}=="0fd9", ATTR{idProduct}=="006d", MODE="0660", GROUP="wheel"
+        '';
     };
 
     postgresql = {
@@ -112,12 +128,6 @@ in {
       extraPackages32 = with pkgs.pkgsi686Linux; [ libva ];
       driSupport = true;
       driSupport32Bit = true;
-    };
-
-    pulseaudio = {
-      enable = true;
-      package = pkgs.pulseaudioFull;
-      support32Bit = true;
     };
   };
 
@@ -147,6 +157,8 @@ in {
       hashedPassword = settings.user.hashedPassword;
     };
   };
+
+  xdg.mime.enable = true;
 
   home-manager.users.root = { pkgs, ... }: {
     imports = [
@@ -198,18 +210,10 @@ in {
   ] ++ [
     chromium
     firefox
+    libreoffice-fresh
+    masterpdfeditor
     pavucontrol
   ];
-
-  programs.firejail = {
-    enable = true;
-
-    wrappedBinaries = {
-      firefox-sandboxed = {
-        executable = "${lib.getBin pkgs.firefox}/bin/firefox";
-      };
-    };
-  };
 
   virtualisation.docker = {
     enable = true;

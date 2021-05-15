@@ -25,6 +25,7 @@ let
       evil-leader
       ivy
       magit
+      notmuch
       org-plus-contrib
       projectile
       spacemacs-theme

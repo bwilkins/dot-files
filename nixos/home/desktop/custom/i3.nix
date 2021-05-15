@@ -4,17 +4,17 @@ let
   settings = import ../../../settings.nix;
   grep = (lib.getBin pkgs.gnugrep) + "/bin/grep";
   egrep = (lib.getBin pkgs.gnugrep) + "/bin/egrep";
-  sed = (lib.getBin pkgs.gnused) + "/bin/sed";
   bash = (lib.getBin pkgs.bash) + "/bin/bash";
-  cut = (lib.getBin pkgs.coreutils) + "/bin/cut";
   echo = (lib.getBin pkgs.coreutils) + "/bin/echo";
   tee = (lib.getBin pkgs.coreutils) + "/bin/tee";
-  pacmd = (lib.getBin pkgs.pulseaudio) + "/bin/pacmd";
+  awk = (lib.getBin pkgs.gawk) + "/bin/awk";
+  pactl = (lib.getBin pkgs.pulseaudio) + "/bin/pactl";
   rofi = (lib.getBin config.programs.rofi.package) + "/bin/rofi";
 in {
 
   home.packages = with pkgs; [
     i3lock-color
+    clipcat
   ];
 
   services = {
@@ -39,6 +39,9 @@ in {
       set $eight    "8"
       set $games    "9:"
 
+      set $launcher-clipboard-insert clipcat-menu insert
+      set $launcher-clipboard-remove clipcat-menu remove
+
       assign [class="Mozilla Firefox"] $web
       assign [class="^Slack"] $chat
       assign [class="Discord$"] $chat
@@ -47,13 +50,16 @@ in {
 
       for_window [title="emacs-capture"] floating enable
 
-      exec firefox-sandboxed
+      exec clipcatd
     '';
 
     config = {
-      fonts = [
-        "${settings.font.monoFamily} ${settings.font.defaultSize.points}"
-      ];
+      fonts = {
+        names = [
+          settings.font.monoFamily
+        ];
+        size = settings.font.defaultSize.pointsFloat;
+      };
 
       menu = "\"${rofi} -show combi -modi combi -combi-modi run,emoji\"";
       terminal = "kitty";
@@ -107,6 +113,15 @@ in {
 
         # Emoji "keyboard"
         "${modifier}+e" = "exec ${rofi} -show emoji";
+
+        # clipboard manipulation
+        "${modifier}+Shift+v" = "exec $launcher-clipboard-insert";
+
+        # screenshot
+        "${modifier}+s" = "exec flameshot gui -p ~/Pictures/screenshots";
+
+        # offline code docs
+        "${modifier}+z" = "exec zeal";
       };
 
       gaps = {
@@ -119,10 +134,13 @@ in {
 
         statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configFile."i3status-rust/config-top.toml".target}";
 
-        fonts = [
-          "${settings.font.nerdFamily} ${settings.font.defaultSize.points}"
-          "${settings.font.monoFamily} ${settings.font.defaultSize.points}"
-        ];
+        fonts = {
+          names = [
+            settings.font.nerdFamily
+            settings.font.monoFamily
+          ];
+          size = settings.font.defaultSize.pointsFloat;
+        };
 
         trayOutput = "primary";
       }];
@@ -139,6 +157,43 @@ in {
     };
   };
 
+  xdg.configFile."clipcat/clipcatd.toml" = {
+    text = ''
+      daemonize = true
+      max_history = 100
+      log_level = 'ERROR'
+
+      [monitor]
+      load_current = true       # load current clipboard content at startup
+      enable_clipboard = true   # watch X11 clipboard
+      enable_primary = true     # watch X11 primary clipboard
+
+      [grpc]
+      host = '127.0.0.1'
+      port = 45045
+    '';
+  };
+
+  xdg.configFile."clipcat/clipcatctl.toml" = {
+    text = ''
+      server_host = '127.0.0.1'
+      server_port = 45045
+      log_level = 'ERROR'
+    '';
+  };
+
+  xdg.configFile."clipcat/clipcat-menu.toml" = {
+    text = ''
+      server_host = '127.0.0.1' # host address of clipcat gRPC server
+      server_port = 45045       # port number of clipcat gRPC server
+      finder = 'rofi'
+
+      [rofi]
+      line_length = 200
+      menu_length = 10
+    '';
+  };
+
   xdg.dataFile."bin/toggle-sound-output" = {
     executable = true;
 
@@ -148,16 +203,16 @@ in {
       set -e
 
       # Get in-use sink (set as the default-sink)
-      current_output=$(${pacmd} dump | ${grep} set-default-sink | ${cut} -d\  -f2)
+      current_output=$(${pactl} info | ${grep} 'Default Sink:' | ${awk} '{print $3}')
       ${echo} "Current Output: $current_output" | ${tee} -a ~/click.log
 
       # Only select alsa outputs, only outputs I want (edifier speakers, steelseries headset), and not the current output
-      next_output=$(${pacmd} list-sinks | ${grep} name: | ${grep} alsa_output | ${egrep} 'EDIFIER|SteelSeries' | ${grep} -v $current_output)
-      next_output_name=$(${echo} $next_output | ${sed} -e 's/^.*<\(.*\)>$/\1/')
+      next_output=$(${pactl} list short sinks | ${grep} alsa_output | ${egrep} 'EDIFIER|SteelSeries' | ${grep} -v $current_output)
+      next_output_name=$(${echo} $next_output | ${awk} '{print $2}')
 
       ${echo} "Next output: $next_output_name" | ${tee} -a ~/click.log
 
-      ${pacmd} set-default-sink $next_output_name | ${tee} -a ~/click.log
+      ${pactl} set-default-sink $next_output_name | ${tee} -a ~/click.log
     '';
   };
 
@@ -177,7 +232,7 @@ in {
               memory_mem = "💭 ";
               cpu = "🖥️ ";
               thermometer = "🌡️";
-              time = "🕓";
+              time = "🕓 ";
               toggle_off = "🌑";
               toggle_on = "💡";
               volume_empty = "🔈";
@@ -189,6 +244,7 @@ in {
         };
 
         blocks = [
+/*
           {
             block = "toggle";
             text = " Keylight";
@@ -197,7 +253,7 @@ in {
             command_state = ''bash -c 'light_status=$(curl http://elgato-key-light-2404.local:9123/elgato/lights      | jq .lights[0].on); if [ "$light_status" == "1" ]; then echo "on"; fi' '';
             interval = 60;
           }
-
+*/
           {
             block = "disk_space";
             path = "/";
@@ -220,7 +276,7 @@ in {
           {
             block = "cpu";
             interval = 2;
-            format = "{utilization}% {frequency}GHz";
+            format = "{utilization} {frequency}";
           }
 
           #  {
@@ -258,7 +314,9 @@ in {
             on_click = config.xdg.dataFile."bin/toggle-sound-output".target;
             mappings = {
               "alsa_output.usb-EDIFIER_EDIFIER_S880DB-00.analog-stereo" = " Speakers📣";
+              "alsa_output.usb-EDIFIER_EDIFIER_S880DB-00.output_analog-stereo" = " Speakers📣";
               "alsa_output.usb-SteelSeries_Arctis_Pro_Wireless-00.stereo-game" = " Headset🎧";
+              "alsa_output.usb-SteelSeries_Arctis_Pro_Wireless-00.output_mono-chat_output_stereo-game_input_mono-chat" = " Headset🎧";
             };
           }
 
