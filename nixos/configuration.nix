@@ -6,7 +6,7 @@
 let
   settings = import ./settings.nix;
 in {
-  system.stateVersion = "20.09";
+  system.stateVersion = "21.05";
 
   imports = [
     ./hardware-configuration.nix
@@ -14,7 +14,12 @@ in {
   ];
 
   nixpkgs = {
-    config.allowUnfree = true;
+    config = {
+      allowBroken = true;
+      allowUnfree = true;
+      packageOverrides = pkgs: { steam = pkgs.steam.override { extraPkgs = pkgs: [ pkgs.pipewire.lib ]; }; };
+
+    };
   };
   nix.extraOptions = ''
     keep-outputs = true
@@ -45,6 +50,11 @@ in {
   networking = {
     hostName = "cascade"; # Define your hostname.
     networkmanager.enable = true;
+    useDHCP = false;
+    interfaces.enp5s0.useDHCP = true;
+    interfaces.enp6s0.useDHCP = true;
+    interfaces.wlp7s0.useDHCP = true;
+    firewall.allowedTCPPorts = [ 24800 ];
   };
 
   # Set your time zone.
@@ -52,10 +62,6 @@ in {
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here. Per-interface useDHCP will be
   # mandatory in the future, so this generated config replicates the default behaviour.
-  networking.useDHCP = false;
-  networking.interfaces.enp5s0.useDHCP = true;
-  networking.interfaces.enp6s0.useDHCP = true;
-  networking.interfaces.wlp7s0.useDHCP = true;
 
   # Configure network proxy if necessary networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
@@ -111,6 +117,7 @@ in {
         SUBSYSTEM=="usb", ATTR{idVendor}=="0fd9", ATTR{idProduct}=="0063", MODE="0660", GROUP="wheel"
         SUBSYSTEM=="usb", ATTR{idVendor}=="0fd9", ATTR{idProduct}=="006c", MODE="0660", GROUP="wheel"
         SUBSYSTEM=="usb", ATTR{idVendor}=="0fd9", ATTR{idProduct}=="006d", MODE="0660", GROUP="wheel"
+        SUBSYSTEM=="usb", ATTR{idVendor}=="0403", ATTR{idProduct}=="6001", MODE="0660", GROUP="wheel"
         '';
     };
 
@@ -176,6 +183,7 @@ in {
           "dropbox"
           "firefox-bin"
           "firefox-release-bin-unwrapped"
+          "vscode-extension-ms-vscode-cpptools"
           "ruby-mine"
           "postman"
           "signal-desktop"

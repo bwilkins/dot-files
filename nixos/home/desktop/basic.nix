@@ -12,14 +12,17 @@ in {
     ./custom/kitty.nix
     ./custom/i3.nix
     ./custom/rofi.nix
-    # ./custom/vscode.nix
+    ./custom/vscode.nix
   ];
 
-  nixpkgs.overlays = [(self: super: { discord = super.discord.overrideAttrs (_: { src = builtins.fetchTarball "https://dl.discordapp.net/apps/linux/0.0.14/discord-0.0.14.tar.gz"; });})];
+  nixpkgs.overlays = [(self: super: { discord = super.discord.overrideAttrs (_: { src = builtins.fetchTarball "https://dl.discordapp.net/apps/linux/0.0.15/discord-0.0.15.tar.gz"; });})];
 
   home.packages = with pkgs; [
     _1password-gui
+    blender
     calibre
+    cura
+    curaengine
     discord
     gparted
     flameshot
@@ -29,18 +32,19 @@ in {
     mpv
     nixpkgs-master.jetbrains.ruby-mine
     obs-studio
-    obs-v4l2sink
     pinta
     postman
+    prusa-slicer
     signal-desktop
     slack
     spotify
     steam
     sxiv
+    synergy
     xclip
     yubikey-manager-qt
     zathura
-    zeal
+    # zeal
     zoom-us
   ];
 
@@ -60,8 +64,8 @@ in {
         "application/pdf"               = "zathura.desktop";
         "image/jpeg"                    = "sxiv.desktop";
         "image/png"                     = "sxiv.desktop";
-        "x-scheme-handler/http"         = "brave.desktop";
-        "x-scheme-handler/https"        = "brave.desktop";
+        "x-scheme-handler/http"         = "firefox.desktop";
+        "x-scheme-handler/https"        = "firefox.desktop";
         "x-scheme-handler/org-protocol" = "emacs-capture.desktop";
       };
     };

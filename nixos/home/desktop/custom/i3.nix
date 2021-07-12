@@ -259,6 +259,7 @@ in {
             path = "/";
             alias = "/";
             info_type = "available";
+            format = "/ {available}";
             unit = "GB";
             interval = 20;
             warning = 20.0;
@@ -268,7 +269,7 @@ in {
           {
             block = "memory";
             display_type = "memory";
-            format_mem = "{Mup}%";
+            format_mem = "{mem_total_used_percents}";
             clickable = false;
             interval = 4;
           }
@@ -289,7 +290,7 @@ in {
             block = "temperature";
             collapsed = false;
             interval = 4;
-            format = "{max}°";
+            format = "{max}";
             chip = "k10temp-*";
           }
 
@@ -310,7 +311,7 @@ in {
             driver = "pulseaudio";
             block = "sound";
             step_width = 6;
-            format = "{output_name} {volume}%";
+            format = "{output_name} {volume}";
             on_click = config.xdg.dataFile."bin/toggle-sound-output".target;
             mappings = {
               "alsa_output.usb-EDIFIER_EDIFIER_S880DB-00.analog-stereo" = " Speakers📣";

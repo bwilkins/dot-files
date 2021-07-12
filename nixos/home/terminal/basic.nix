@@ -170,7 +170,9 @@ in {
     direnv = {
       enable = true;
       enableBashIntegration = true;
-      enableNixDirenvIntegration = true;
+      nix-direnv = {
+        enable = true;
+      };
     };
 
     starship = {
